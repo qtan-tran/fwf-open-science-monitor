@@ -5,7 +5,12 @@
       "Bash(npm install:*)",
       "Bash(npx next:*)",
       "Bash(rm -rf apps)",
-      "Bash(mkdir -p apps)"
+      "Bash(mkdir -p apps)",
+      "Bash(npx prisma:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/fwf_monitor\" npx prisma:*)",
+      "Bash(pip install:*)",
+      "Bash(FWF_API_KEY=test FWF_API_URL=https://openapi.fwf.ac.at DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fwf_monitor python:*)",
+      "Bash(python:*)"
     ]
   }
 }

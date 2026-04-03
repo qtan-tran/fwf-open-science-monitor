@@ -1,5 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// FWF Open Science Monitor — Prisma schema
+// Datasource: PostgreSQL (DATABASE_URL from .env)
+// API reference: docs/api-field-reference.md
 
 generator client {
   provider = "prisma-client-js"
@@ -8,4 +9,275 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Project
+// Sourced from the `projects` Meilisearch index.
+// Primary key: FWF short ID (e.g. "DOC32").
+// Stable cross-reference key: grantDoi (e.g. "10.55776/DOC32").
+// ---------------------------------------------------------------------------
+model Project {
+  /// FWF short ID extracted from _str.grantdoi, e.g. "DOC32"
+  id                String    @id
+
+  /// Stable grant DOI from _str.grantdoi, e.g. "10.55776/DOC32"
+  grantDoi          String    @unique
+
+  /// _str.projecttitle.en
+  titleEn           String
+
+  /// _str.projecttitle.de (not always present)
+  titleDe           String?
+
+  /// _str.prproposalsummary.en — stored as TEXT; may be multi-paragraph
+  summaryEn         String?
+
+  /// _str.program.en — funding programme name
+  programEn         String?
+
+  /// _str.status.en — "Ended" | "Ongoing"
+  statusEn          String?
+
+  /// _date.approvaldate
+  approvalDate      DateTime?
+
+  /// _date.startdate
+  startDate         DateTime?
+
+  /// _date.enddate — absent for ongoing projects
+  endDate           DateTime?
+
+  /// _long.approvedamount — EUR; only populated for projects approved ≥ 2012
+  approvedAmount    BigInt?
+
+  /// Derived from approvalDate year — stored for fast GROUP BY without date truncation
+  approvalYear      Int?
+
+  /// _str.principalinvestigator.firstname
+  piFirstName       String?
+
+  /// _str.principalinvestigator.lastname
+  piLastName        String?
+
+  /// _str.principalinvestigator.orcid (bare ID, not the full URL)
+  piOrcid           String?
+
+  /// _str.principalinvestigator.role
+  piRole            String?
+
+  /// _str.principalinvestigator.researchinstitute.name
+  piInstitutionName String?
+
+  /// _str.principalinvestigator.researchinstitute.ror
+  piInstitutionRor  String?
+
+  /// _str.url — Research Radar project page
+  researchRadarUrl  String?
+
+  /// _list.keywords.split
+  keywords          String[]
+
+  /// _list.researchdisciplines.en (finest granularity)
+  disciplinesEn     String[]
+
+  /// _list.researchfields.en (broadest level)
+  fieldsEn          String[]
+
+  /// Full API response document — preserved for re-processing without re-fetching
+  rawJson           Json?
+
+  lastSyncedAt      DateTime  @default(now())
+
+  // Relations
+  outputs           Output[]         @relation("ProjectOutputs")
+  furtherFunding    FurtherFunding[] @relation("ProjectFurtherFunding")
+
+  @@index([approvalYear])
+  @@index([piInstitutionRor])
+  @@index([statusEn])
+}
+
+// ---------------------------------------------------------------------------
+// Output
+// Sourced from the `output` Meilisearch index.
+// The Meilisearch record ID is NOT stable across uploads; we use DOI as the
+// stable identifier where present, otherwise generate a cuid.
+// Many-to-many with Project via implicit Prisma join table.
+// ---------------------------------------------------------------------------
+model Output {
+  /// Stable local ID — cuid() by default; if a DOI is present it remains the
+  /// canonical deduplication key via the @unique constraint on `doi`.
+  id              String    @id @default(cuid())
+
+  /// _str.doi — stable across uploads when present; used for deduplication
+  doi             String?   @unique
+
+  /// _str.title
+  title           String?
+
+  /// _str.category — one of the 11 controlled values
+  category        String
+
+  /// _str.type — category-specific subtype
+  type            String?
+
+  /// _list.year — multiple years possible (e.g. conference + publication year)
+  years           Int[]
+
+  /// _str.url
+  url             String?
+
+  /// _str.pmid — PubMed identifier (publications only)
+  pmid            String?
+
+  /// _str.journal (publications only)
+  journal         String?
+
+  /// _str.publisher (publications only)
+  publisher       String?
+
+  /// _bool.providedtoothers — research data / tools: true = shared publicly
+  providedToOthers Boolean?
+
+  /// Derived: true when doi IS NOT NULL AND doi != '' — for fast OA metric queries
+  hasDoi          Boolean   @default(false)
+
+  /// Derived: true when pmid IS NOT NULL AND pmid != '' — for OA metric queries
+  hasPmid         Boolean   @default(false)
+
+  /// Full API response document
+  rawJson         Json?
+
+  lastSyncedAt    DateTime  @default(now())
+
+  // Many-to-many with Project (Prisma implicit join table _ProjectOutputs)
+  projects        Project[] @relation("ProjectOutputs")
+
+  @@index([category])
+  @@index([hasDoi])
+}
+
+// ---------------------------------------------------------------------------
+// FurtherFunding
+// Sourced from the `further-funding` Meilisearch index.
+// IDs not stable across uploads; use funder + fundingId for deduplication.
+// Many-to-many with Project via implicit Prisma join table.
+// ---------------------------------------------------------------------------
+model FurtherFunding {
+  id               String    @id @default(cuid())
+
+  /// _str.funder — funder organisation name
+  funder           String?
+
+  /// _str.fundingid — funder's own grant identifier
+  fundingId        String?
+
+  /// _str.country — funder country
+  country          String?
+
+  /// _str.sector — e.g. "Government", "Charity"
+  sector           String?
+
+  /// _str.title
+  title            String?
+
+  /// _str.doi
+  doi              String?
+
+  /// _str.type — funder-specific grant type vocabulary
+  type             String?
+
+  /// _int.startyear
+  startYear        Int?
+
+  /// _int.endyear
+  endYear          Int?
+
+  /// _str.funderprojecturl
+  funderProjectUrl String?
+
+  lastSyncedAt     DateTime  @default(now())
+
+  // Many-to-many with Project (Prisma implicit join table _ProjectFurtherFunding)
+  projects         Project[] @relation("ProjectFurtherFunding")
+}
+
+// ---------------------------------------------------------------------------
+// Institution
+// Denormalized from _str.principalinvestigator.researchinstitute.* and
+// _list.researchinstitutes[] across all projects.
+// Counts are updated by the ETL after each sync — not computed on-the-fly.
+// ---------------------------------------------------------------------------
+model Institution {
+  /// ROR identifier — globally unique, stable
+  rorId           String    @id
+
+  /// Human-readable institution name (most recent value from API)
+  name            String
+
+  /// ISO 3166-1 alpha-2 country code — defaults to AT (Austria)
+  country         String    @default("AT")
+
+  /// Count of projects where this institution is the PI institution
+  projectCount    Int       @default(0)
+
+  /// Sum of output counts across all linked projects
+  outputCount     Int       @default(0)
+
+  /// When these counts were last recomputed
+  lastComputedAt  DateTime?
+}
+
+// ---------------------------------------------------------------------------
+// MetricSnapshot
+// Pre-aggregated values written by the ETL for dashboard queries.
+// Keyed by (metricKey, year, rorId) — all three nullable for global metrics.
+// ---------------------------------------------------------------------------
+model MetricSnapshot {
+  id          String    @id @default(cuid())
+
+  /// Metric identifier, e.g. "oa_rate_by_year", "institution_ranking",
+  /// "open_data_rate_global", "outputs_per_project_by_program"
+  metricKey   String
+
+  /// Approval or publication year dimension — null for non-time-series metrics
+  year        Int?
+
+  /// Institution ROR dimension — null for non-institution metrics
+  rorId       String?
+
+  /// The scalar metric value (rate as 0–100, count, EUR amount, etc.)
+  value       Float
+
+  /// Extra breakdowns or labels that don't warrant separate columns,
+  /// e.g. {"program": "Stand-alone Projects", "n": 412}
+  metadata    Json?
+
+  computedAt  DateTime  @default(now())
+
+  @@unique([metricKey, year, rorId])
+  @@index([metricKey, year])
+}
+
+// ---------------------------------------------------------------------------
+// SyncLog
+// One record per ETL run — tracks progress and surfaces errors.
+// ---------------------------------------------------------------------------
+model SyncLog {
+  id                  String    @id @default(cuid())
+
+  startedAt           DateTime
+
+  completedAt         DateTime?
+
+  /// "running" | "completed" | "failed"
+  status              String
+
+  projectsProcessed   Int       @default(0)
+
+  outputsProcessed    Int       @default(0)
+
+  /// Human-readable error summary or JSON-serialised exception list
+  errors              String?
 }
