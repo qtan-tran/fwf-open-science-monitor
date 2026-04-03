@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fwf_monitor
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  etl:
+    build: ./etl
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      FWF_API_URL: ${FWF_API_URL}
+      FWF_API_KEY: ${FWF_API_KEY}
+    profiles:
+      - etl
+
+volumes:
+  postgres_data:
