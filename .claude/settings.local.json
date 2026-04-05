@@ -17,7 +17,9 @@
       "Bash(npx tsc:*)",
       "Bash(node node_modules/.bin/tsc --noEmit --project apps/web/tsconfig.json)",
       "Bash(node apps/web/node_modules/.bin/tsc --noEmit --project apps/web/tsconfig.json)",
-      "Bash(./node_modules/typescript/bin/tsc --noEmit)"
+      "Bash(./node_modules/typescript/bin/tsc --noEmit)",
+      "Bash(git -C /c/Users/qtran1/Documents/Coding/fwf-open-science-monitor remote -v)",
+      "Bash(npm test:*)"
     ]
   }
 }
