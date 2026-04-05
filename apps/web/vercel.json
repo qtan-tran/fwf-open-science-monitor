@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npx prisma generate && next build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm ci",
+  "env": {
+    "NEXT_TELEMETRY_DISABLED": "1"
+  }
+}

@@ -1,0 +1,50 @@
+name: ETL — Daily sync
+
+on:
+  schedule:
+    # Runs at 03:00 UTC every day
+    - cron: "0 3 * * *"
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+    inputs:
+      metrics_only:
+        description: "Skip API fetch and only recompute metrics"
+        required: false
+        default: "false"
+        type: boolean
+
+jobs:
+  run-etl:
+    name: Run ETL pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: etl/requirements.txt
+
+      - name: Install dependencies
+        working-directory: etl
+        run: pip install -r requirements.txt
+
+      - name: Run full pipeline
+        if: ${{ inputs.metrics_only != 'true' }}
+        working-directory: etl
+        run: python -m src.pipeline
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FWF_API_URL: ${{ secrets.FWF_API_URL }}
+          FWF_API_KEY: ${{ secrets.FWF_API_KEY }}
+
+      - name: Recompute metrics only
+        if: ${{ inputs.metrics_only == 'true' }}
+        working-directory: etl
+        run: python -m src.pipeline --metrics-only
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FWF_API_URL: ${{ secrets.FWF_API_URL }}
+          FWF_API_KEY: ${{ secrets.FWF_API_KEY }}

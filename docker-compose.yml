@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fwf_monitor
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d fwf_monitor"]
       interval: 5s
@@ -17,30 +17,41 @@ services:
       retries: 10
       start_period: 10s
 
-  etl:
-    build: ./etl
-    # Wait until postgres is accepting connections before starting the ETL.
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
-    # Load .env from the repo root into the container's environment.
-    # Individual environment: entries below override values from .env where
-    # needed (e.g. DATABASE_URL must use the Docker service hostname, not
-    # localhost, so containers can reach each other).
     env_file:
       - .env
     environment:
-      # Point to the db service by its Docker Compose service name.
+      # Override DATABASE_URL so the container reaches db by service name.
       DATABASE_URL: postgresql://postgres:postgres@db:5432/fwf_monitor
-      # Fall back to the public FWF API if FWF_API_URL is not set in .env.
+      NODE_ENV: production
+
+  etl:
+    build: ./etl
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/fwf_monitor
       FWF_API_URL: ${FWF_API_URL:-https://openapi.fwf.ac.at}
-      # FWF_API_KEY is required; it comes from .env via env_file above.
       FWF_API_KEY: ${FWF_API_KEY}
-    # The ETL is a one-shot job; never restart automatically.
+    # One-shot job — never restart automatically.
     restart: "no"
-    # Run with:
-    #   docker-compose run etl
-    #   docker-compose run etl --metrics-only
+    # Only start when explicitly requested:
+    #   docker compose --profile etl up etl
+    #   docker compose run etl
+    #   docker compose run etl python -m src.pipeline --metrics-only
+    profiles:
+      - etl
 
 volumes:
-  postgres_data:
+  pgdata:
