@@ -1,11 +1,26 @@
-# FWF Open Science Monitor
+# 🔬 FWF Open Science Monitor
 
-A full-stack dashboard that tracks open-science compliance across thousands of
-[FWF](https://www.fwf.ac.at/en/)-funded research projects — visualising open
-access rates, output trends, institutional rankings, and funding efficiency in
-one place.
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-```
+A sophisticated full-stack dashboard tracking open-science compliance across thousands of [FWF](https://www.fwf.ac.at/en/)-funded research projects. 
+
+---
+
+## 🏛️ Origins & Authorship
+This repository was created and is maintained by **Quoc-Tan Tran**, Open Science Researcher at the **Faculty of Sociology, Bielefeld University**, with the technical assistance of **Claude AI**. 
+
+It is designed to serve as a reproducible research infrastructure, demonstrating how automated pipelines and modern web technologies can enhance transparency in research funding and scientific outputs.
+
+---
+
+## ⚡ The Vision
+This monitor bridges the gap between raw funding data and actionable insights. It visualizes open access rates, output trends, and institutional rankings to support the global move toward open, reproducible science.
+
+```text
 ┌──────────────────────────────────────────────────────────────────────┐
 │  Dashboard  │  Projects  │  Institutions  │  Explore  │  Export      │
 ├──────────────────────────────────────────────────────────────────────┤
@@ -14,269 +29,121 @@ one place.
 │  │ Projects │  │ Outputs  │  │ Instits  │  │ OA Rate  │            │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘            │
 │                                                                      │
-│  OA Rate Over Time          Projects by Year                        │
-│  ┌──────────────────────┐   ┌──────────────────────┐               │
-│  │  ▁▂▃▄▅▆▇█           │   │  ▂▃▄▅▄▆▇█▇▆          │               │
-│  └──────────────────────┘   └──────────────────────┘               │
+│  OA Rate Over Time          Projects by Year                         │
+│  ┌──────────────────────┐   ┌──────────────────────┐                 │
+│  │  ▁▂▃▄▅▆▇█           │   │  ▂▃▄▅▄▆▇█▇▆          │                 │
+│  └──────────────────────┘   └──────────────────────┘                 │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-## Features
+## ✨ Key Features
 
-- **Dashboard** — headline metrics (projects, outputs, institutions, OA rate) with six interactive charts
-- **Projects browser** — paginated, searchable, and filterable project list with detail pages
-- **Institutions** — sortable rankings by project count, output count, or OA rate
-- **10 Explore modes** — guided analysis views: OA trends, publication breakdowns, researcher search, funding vs. outputs scatter, system health, and more
-- **CSV / JSON export** — filtered bulk downloads of all four data types
-- **ETL pipeline** — daily sync from the FWF Open Research API into PostgreSQL, with computed metrics
-- **In-memory LRU cache** — 5-minute TTL on all API routes, zero infrastructure required
-- **Dark mode** — system-preference aware via Tailwind CSS
-- **Type-safe** — TypeScript throughout; Prisma for the data layer
+- **📊 Six-Axis Dashboard** — Headline metrics (OA rates, funding efficiency) with interactive Recharts visualizations.
+- **🔍 Deep-Dive Explorer** — 10 unique analysis modes including researcher search, publication breakdowns, and funding scatter plots.
+- **⚡ High-Performance ETL** — Python 3.12 pipeline that daily syncs, cleans, and computes metrics from the FWF Open Research API.
+- **🚀 Production Ready** — In-memory LRU caching (5-min TTL), full type-safety with Prisma, and system-aware Dark Mode.
+- **📦 One-Command Setup** — Fully containerized environment for instant local development and testing.
 
 ---
 
-## Quick Start
-
-> **Requirements:** Docker Desktop (or Docker Engine + Compose v2).  
-> A FWF API key is only needed to run the ETL pipeline, not to browse the app.
-
-```bash
-# 1. Clone
-git clone https://github.com/qtan-tran/fwf-open-science-monitor.git
-cd fwf-open-science-monitor
-
-# 2. Configure environment
-cp .env.example .env
-# Open .env and add your FWF_API_KEY (optional for browsing; required for ETL)
-
-# 3. Start the database and web app
-docker compose up
-
-# 4. Apply the database schema (first run only)
-docker compose exec web npx prisma migrate deploy
-
-# 5. Open the dashboard
-open http://localhost:3000
-```
-
-The database starts empty — you will see zeroes until you run the ETL (see [Running the ETL](#running-the-etl)).
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend framework | Next.js 16 (App Router) |
-| Language | TypeScript 5 |
-| Styling | Tailwind CSS 4 |
-| Charts | Recharts 2 |
-| Icons | Lucide React |
-| Database ORM | Prisma 5 |
-| Database | PostgreSQL 16 |
-| ETL language | Python 3.12 |
-| ETL data source | FWF Open Research API (Meilisearch) |
-| Container runtime | Docker / Docker Compose v2 |
-| Frontend tests | Vitest 4 + Testing Library |
-| ETL tests | pytest 9 |
-| CI | GitHub Actions |
-| Frontend hosting | Vercel (recommended) |
-
----
-
-## Project Structure
-
-```
-fwf-open-science-monitor/
-├── apps/web/                  # Next.js 16 frontend
-│   ├── prisma/                #   Schema and migrations
-│   ├── src/
-│   │   ├── app/               #   App Router: pages + API routes
-│   │   │   ├── api/           #     8 REST endpoints
-│   │   │   ├── dashboard/     #     Dashboard page
-│   │   │   ├── projects/      #     Project list + detail pages
-│   │   │   ├── institutions/  #     Institution list + detail
-│   │   │   ├── explore/       #     Hub + 10 mode pages
-│   │   │   ├── export/        #     Export builder
-│   │   │   └── about/         #     About page
-│   │   ├── components/        #   Reusable React components
-│   │   │   ├── ui/            #     StatCard, DataTable, FilterBar, …
-│   │   │   └── charts/        #     Recharts wrappers
-│   │   └── lib/               #   Prisma client, LRU cache, API client, types
-│   ├── Dockerfile
-│   └── vercel.json
-├── etl/                       # Python ETL pipeline
-│   ├── src/
-│   │   ├── pipeline.py        #   Orchestrator (6 steps)
-│   │   ├── fetcher.py         #   FWF API client with retries
-│   │   ├── cleaner.py         #   Data normalisation + validation
-│   │   ├── loader.py          #   Postgres upsert logic
-│   │   └── metrics.py         #   Metric computation
-│   ├── tests/                 #   pytest suite (245 tests)
-│   └── Dockerfile
-├── docs/                      # Architecture and guides
-├── .github/workflows/         # CI + ETL schedule
-├── docker-compose.yml
-└── .env.example
-```
-
----
-
-## Development
+## 🚀 Quick Start (Localhost)
 
 ### Prerequisites
 
-- Docker Desktop (for the database) — or PostgreSQL 16 installed locally
-- Node.js 20+
-- Python 3.12+
+Ensure you have Docker Desktop installed and running.
 
-### Setup
+### 1. Clone & Initialize
 
 ```bash
-# 1. Copy environment variables
+git clone https://github.com/qtan-tran/fwf-open-science-monitor.git
+cd fwf-open-science-monitor
 cp .env.example .env
-
-# 2. Start the database only
-docker compose up db
-
-# 3. Install web dependencies and set up Prisma
-cd apps/web
-npm install
-npx prisma migrate dev   # creates the schema
-npx prisma generate      # generates the TypeScript client
-
-# 4. Start the dev server
-npm run dev              # → http://localhost:3000
-
-# 5. (Optional) Set up the ETL for local development
-cd ../../etl
-pip install -r requirements.txt
 ```
 
-### Running Tests
+### 2. Launch Stack
 
 ```bash
-# Web (Vitest — runs in ~10 s, no database needed)
-cd apps/web
-npm test                   # run once
-npm run test:watch         # watch mode
-npm run test:coverage      # with coverage report
-
-# ETL (pytest)
-cd etl
-python -m pytest           # all 245 tests
-python -m pytest -v        # verbose
+docker compose up -d
 ```
 
----
-
-## Running the ETL
-
-The ETL pipeline fetches data from the FWF Open Research API, cleans it, loads it into PostgreSQL, and computes all metrics. You need a **FWF API key** (free, self-service at <https://openapi.fwf.ac.at/fwfkey>).
-
-### Via Docker (recommended)
+### 3. Setup Database & Browse
 
 ```bash
-# Full sync: fetch → load → compute metrics  (~5–15 min on first run)
-docker compose run --rm etl
-
-# Metrics only (no API call — useful after schema changes)
-docker compose run --rm etl python -m src.pipeline --metrics-only
+docker compose exec web npx prisma migrate deploy
+# Open http://localhost:3000
 ```
 
-### Directly (local development)
+> [!TIP]  
+> The database starts empty. To see real data, follow the ETL Guide below to sync from the official FWF API.
 
-```bash
-cd etl
-python -m src.pipeline
-python -m src.pipeline --metrics-only
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology | Why? |
+|------|-----------|------|
+| **Frontend** | **Next.js 16 (App Router)** | Best-in-class performance and SEO for dashboards. |
+| **Styling** | **Tailwind CSS 4** | Utility-first design for a clean, modern UI. |
+| **Backend** | **PostgreSQL + Prisma** | Robust relational data with a type-safe ORM. |
+| **Pipeline** | **Python 3.12 + Pytest** | Fast data processing with 240+ unit tests for reliability. |
+| **CI / CD** | **GitHub Actions** | Automated linting, type-checking, and ETL scheduling. |
+
+---
+
+## 📂 Project Architecture
+
+```text
+fwf-open-science-monitor/
+├── apps/web/           # Next.js 16 frontend
+│   ├── prisma/         #   Database schema and migrations
+│   ├── src/app/        #   App Router: pages + API routes
+│   └── components/     #   Reusable UI & Chart components
+├── etl/                # Python data pipeline
+│   ├── src/            #   Orchestrator, Cleaner, & Metric computation
+│   └── tests/          #   Comprehensive pytest suite
+├── .github/workflows/  # CI pipelines + Daily ETL schedule
+└── docker-compose.yml  # Local orchestration
 ```
 
-### ETL Pipeline Stages
+---
 
-| Step | What it does |
-|---|---|
-| 1. Init | Creates `FWFClient` and `DatabaseLoader`; writes `running` to `SyncLog` |
-| 2. Projects | Fetches all projects from FWF API → cleans → upserts to `projects` table |
-| 3. Outputs | Fetches all outputs → cleans → upserts → links to projects |
-| 4. Further Funding | Fetches co-funding records → assigns stable hash IDs → upserts → links |
-| 5. Institutions | Extracts unique ROR IDs from projects → upserts → refreshes counts |
-| 6. Metrics | Runs `MetricComputer.compute_all()` — writes all `MetricSnapshot` rows |
-| 7. Log | Writes `completed` (or `failed`) to `SyncLog` |
+## 🔄 Running the ETL
 
-Step failures are isolated — a failure in step 3 does not stop steps 4–7.
+The ETL pipeline fetches data from the FWF Open Research API, cleans it, and populates the PostgreSQL database.
 
-### Scheduling
-
-See `.github/workflows/etl-schedule.yml` — the pipeline runs daily at 03:00 UTC via GitHub Actions and reads `DATABASE_URL`, `FWF_API_KEY`, and `FWF_API_URL` from repository secrets.
+1. **Get an API Key:** Grab a free key at https://openapi.fwf.ac.at/fwfkey  
+2. **Configure:** Open your `.env` and set:
+   ```bash
+   FWF_API_KEY=your_key_here
+   ```
+3. **Run Pipeline:**
+   ```bash
+   docker compose run --rm etl
+   ```
 
 ---
 
-## API Endpoints
+## 🤝 Contributing
 
-All endpoints are under `/api/`. Responses are JSON. All read endpoints are cached in-process for 5 minutes.
+Contributions are welcome! If you want to improve the charts, add a new "Explore" mode, or fix a bug:
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/metrics/summary` | Overall totals: projects, outputs, institutions, OA rate, year range |
-| `GET` | `/api/metrics/yearly` | Yearly time-series for a given metric (see `?metric=` below) |
-| `GET` | `/api/metrics/institutions` | Institution rankings with sorting and country filter |
-| `GET` | `/api/projects` | Paginated, searchable project list |
-| `GET` | `/api/projects/[id]` | Full project detail with outputs and further-funding |
-| `GET` | `/api/outputs` | Paginated output list with category/year/DOI filters |
-| `GET` | `/api/export` | Bulk export of projects/outputs/metrics/institutions as CSV or JSON |
-| `GET` | `/api/explore` | Raw data for one of the 10 numbered explore modes |
-
-**`/api/metrics/yearly` — `?metric=` values:**
-
-| Value | Description |
-|---|---|
-| `project_count` | Number of approved projects per year |
-| `oa_rate` | OA publication rate (%) per year |
-| `output_by_category` | Output counts per category per year |
-| `funding_efficiency` | Average approved grant amount per year |
-| `open_data_rate` | Share of data outputs with provided-to-others flag (%) |
-| `open_software_rate` | Share of software outputs with a DOI (%) |
-
-Optional filters: `?startYear=2010&endYear=2023`
+1. **Fork** the repository  
+2. **Create** your feature branch:
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. **Commit** your changes using [Conventional Commits](https://www.conventionalcommits.org/)  
+4. **Push** to the branch and open a Pull Request  
 
 ---
 
-## Deployment
+## 📜 License & Data Attribution
 
-### Vercel (frontend)
-
-1. Import the repo into Vercel. Set the **Root Directory** to `apps/web`.
-2. Add `DATABASE_URL` as an environment variable (e.g. [Neon](https://neon.tech), [Supabase](https://supabase.com), [Railway](https://railway.app)).
-3. Vercel reads `apps/web/vercel.json` — the build command (`npx prisma generate && next build`) is pre-configured.
-
-### Docker (full stack)
-
-```bash
-docker compose up          # starts db + web
-docker compose run etl     # runs ETL once
-```
-
-For production, replace the docker-compose `web.environment.DATABASE_URL` with your production connection string and use a secrets manager instead of `.env`.
+- **Code:** Released under the **MIT License**  
+- **Data Source:** https://openapi.fwf.ac.at — Data provided by the Austrian Science Fund (FWF) under CC0  
+- **Identifiers:** Institutional data supported by https://ror.org and https://orcid.org  
 
 ---
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for branch conventions, PR checklist, and code style guidelines.
-
----
-
-## License
-
-MIT — see [LICENSE](LICENSE).
-
-## Data Attribution
-
-- **FWF Open Research API** — data is made available by the Austrian Science Fund (FWF) under CC0. API documentation: <https://openapi.fwf.ac.at>
-- **ROR** — Research Organization Registry identifiers under CC0: <https://ror.org>
-- **ORCID** — researcher identifiers: <https://orcid.org>
-
-## Acknowledgments
-
-Built to support open-science monitoring and to demonstrate reproducible research infrastructure. Not an official FWF product.
+**Built with ❤️ for Open Science.**  
+*If you find this project useful, please consider giving it a ⭐ to help others find it!*
