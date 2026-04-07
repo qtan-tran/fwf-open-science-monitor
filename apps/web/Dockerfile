@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Stage 1 — deps: install production + dev dependencies
 # ─────────────────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN npm ci
 # ─────────────────────────────────────────────────────────────────────────────
 # Stage 2 — build: generate Prisma client and compile Next.js
 # ─────────────────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
@@ -37,7 +37,7 @@ RUN npm run build
 # ─────────────────────────────────────────────────────────────────────────────
 # Stage 3 — runner: minimal production image
 # ─────────────────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
@@ -58,6 +58,16 @@ COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Prisma client engines need to be present at runtime
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
+
+# Prisma CLI + schema/migrations needed for `prisma migrate deploy`
+COPY --from=build /app/node_modules/prisma ./node_modules/prisma
+COPY --from=build /app/prisma ./prisma
+# Re-create the .bin/prisma symlink properly (Docker COPY resolves symlinks into
+# plain files, which breaks __dirname-relative WASM lookups inside the CLI).
+RUN mkdir -p node_modules/.bin \
+    && BIN_PATH=$(node -pe "require('./node_modules/prisma/package.json').bin.prisma") \
+    && ln -sf "../prisma/$BIN_PATH" node_modules/.bin/prisma \
+    && chmod +x "node_modules/prisma/$BIN_PATH"
 
 USER nextjs
 
