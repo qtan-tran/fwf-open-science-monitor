@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   AreaChart, Area, LineChart, Line, BarChart, Bar,
@@ -8,21 +8,19 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
 } from "recharts";
 import {
-  Search, Download, ExternalLink, RefreshCw, FlaskConical, AlertTriangle,
+  Search, Download, ExternalLink, FlaskConical, AlertTriangle,
 } from "lucide-react";
 import {
   getMetricsSummary,
   getYearlyMetrics,
   getInstitutionRankings,
   getProjects,
-  getExportUrl,
 } from "@/lib/api-client";
 import type {
   MetricSummary,
   YearlyMetric,
   InstitutionRanking,
   ProjectListItem,
-  PaginatedResponse,
 } from "@/lib/types";
 import { useChartTheme, CHART_COLORS } from "@/components/charts/useChartTheme";
 import { LoadingState } from "@/components/ui/LoadingState";
@@ -1064,7 +1062,6 @@ function SystemMode() {
   if (loading) return <LoadingState variant="cards" />;
   if (error)   return <ErrorState message={error} />;
 
-  const withOrcid    = sample.filter((p) => false).length; // ORCID not in ProjectListItem
   const withRor      = sample.filter((p) => p.piInstitutionRor).length;
   const withOutputs  = sample.filter((p) => p.outputCount > 0).length;
   const withFunding  = sample.filter((p) => p.approvedAmount != null).length;

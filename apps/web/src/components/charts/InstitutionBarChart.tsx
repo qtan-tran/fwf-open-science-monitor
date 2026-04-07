@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import type { InstitutionRanking } from "@/lib/types";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { memo } from "react";
 import { useChartTheme } from "./useChartTheme";
 
 interface TooltipProps {
@@ -63,7 +64,7 @@ function ShortNameTick({
   );
 }
 
-export function InstitutionBarChart({
+export const InstitutionBarChart = memo(function InstitutionBarChart({
   data,
 }: {
   data: InstitutionRanking[];
@@ -129,4 +130,4 @@ export function InstitutionBarChart({
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});

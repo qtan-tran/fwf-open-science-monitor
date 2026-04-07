@@ -8,9 +8,8 @@ import {
   Search,
   ChevronRight,
   ChevronLeft,
-  ExternalLink,
 } from "lucide-react";
-import type { PaginatedResponse, ProjectListItem, InstitutionRanking } from "@/lib/types";
+import type { PaginatedResponse, ProjectListItem } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -27,10 +26,9 @@ interface Filters {
 }
 
 interface ProjectsViewProps {
-  projects:     PaginatedResponse<ProjectListItem>;
-  institutions: InstitutionRanking[];
-  exportUrl:    string;
-  filters:      Filters;
+  projects:  PaginatedResponse<ProjectListItem>;
+  exportUrl: string;
+  filters:   Filters;
 }
 
 // ---------------------------------------------------------------------------
@@ -44,11 +42,6 @@ const STATUS_VARIANTS: Record<string, "success" | "warning" | "neutral"> = {
 
 function statusVariant(s: string | null): "success" | "warning" | "neutral" {
   return STATUS_VARIANTS[s ?? ""] ?? "neutral";
-}
-
-function formatAmount(n: number | null): string {
-  if (n == null) return "—";
-  return `€${n.toLocaleString("de-AT")}`;
 }
 
 // Year options 1995 → current year
@@ -224,7 +217,6 @@ function Pagination({
 
 export function ProjectsView({
   projects,
-  institutions,
   exportUrl,
   filters,
 }: ProjectsViewProps) {
@@ -243,11 +235,6 @@ export function ProjectsView({
     },
     [router, filters]
   );
-
-  const institutionOptions = institutions.map((i) => ({
-    value: i.rorId,
-    label: i.name.length > 40 ? i.name.slice(0, 38) + "…" : i.name,
-  }));
 
   const dropdownFilters = [
     {

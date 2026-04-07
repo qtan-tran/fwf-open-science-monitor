@@ -34,6 +34,7 @@ import { GET } from "@/app/api/metrics/yearly/route";
 import { prisma } from "@/lib/prisma";
 import { cache } from "@/lib/cache";
 import { NextRequest } from "next/server";
+import type { Prisma } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -48,7 +49,15 @@ function makeRequest(params: Record<string, string>) {
 }
 
 function makeSnapshot(metricKey: string, year: number, value: number, metadata?: Record<string, unknown>) {
-  return { metricKey, year, rorId: null, value, metadata: metadata ?? null };
+  return {
+    id: `snap-${metricKey}-${year}`,
+    metricKey,
+    year,
+    rorId: null,
+    value,
+    metadata: (metadata ?? null) as Prisma.JsonValue,
+    computedAt: new Date("2024-01-01"),
+  };
 }
 
 async function callGet(params: Record<string, string>) {

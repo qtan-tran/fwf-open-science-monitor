@@ -7,7 +7,7 @@
  * implementation details and vary by version.
  */
 
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 
 // Recharts uses ResizeObserver — polyfilled in src/test/setup.ts

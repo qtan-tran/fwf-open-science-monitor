@@ -8,7 +8,6 @@ import {
   Users,
   Calendar,
   BadgeEuro,
-  Beaker,
   Globe,
   FileOutput,
   Tag,

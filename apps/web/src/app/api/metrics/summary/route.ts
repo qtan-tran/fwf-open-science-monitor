@@ -34,5 +34,7 @@ export async function GET() {
   };
 
   cache.set(CACHE_KEY, summary, TTL_MS);
-  return NextResponse.json(summary);
+  return NextResponse.json(summary, {
+    headers: { "Cache-Control": "public, max-age=600, stale-while-revalidate=60" },
+  });
 }

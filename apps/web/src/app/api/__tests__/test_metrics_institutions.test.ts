@@ -34,6 +34,7 @@ import { GET } from "@/app/api/metrics/institutions/route";
 import { prisma } from "@/lib/prisma";
 import { cache } from "@/lib/cache";
 import { NextRequest } from "next/server";
+import type { Prisma } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -48,16 +49,18 @@ function makeRequest(params: Record<string, string> = {}) {
 }
 
 function makeInstitution(rorId: string, name: string, country: string, projectCount = 10, outputCount = 50) {
-  return { rorId, name, country, projectCount, outputCount };
+  return { rorId, name, country, projectCount, outputCount, lastComputedAt: new Date("2024-01-01") };
 }
 
 function makeSnapshot(rorId: string, value: number, meta?: Record<string, unknown>) {
   return {
+    id: `snap-${rorId}`,
     metricKey: "institution_project_count",
     year: null,
     rorId,
     value,
-    metadata: meta ?? null,
+    metadata: (meta ?? null) as Prisma.JsonValue,
+    computedAt: new Date("2024-01-01"),
   };
 }
 

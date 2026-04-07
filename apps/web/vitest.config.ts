@@ -9,8 +9,9 @@ export default defineConfig({
     // Component tests use happy-dom; API route tests override with "node" via docblock
     environment: "happy-dom",
     setupFiles: ["./src/test/setup.ts"],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error — environmentMatchGlobs is a valid Vitest option not yet reflected in the bundled types
     environmentMatchGlobs: [
-      // API route files run in Node to match the actual Next.js runtime
       ["src/app/api/**", "node"],
     ],
     coverage: {

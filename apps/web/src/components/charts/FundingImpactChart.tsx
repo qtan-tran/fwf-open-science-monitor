@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import type { YearlyMetric } from "@/lib/types";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { memo } from "react";
 import { useChartTheme } from "./useChartTheme";
 
 export interface FundingDatum {
@@ -72,7 +73,7 @@ function CustomLegend({
   );
 }
 
-export function FundingImpactChart({ data }: { data: FundingDatum[] }) {
+export const FundingImpactChart = memo(function FundingImpactChart({ data }: { data: FundingDatum[] }) {
   const { gridColor, textColor } = useChartTheme();
 
   if (!data.length) {
@@ -155,7 +156,7 @@ export function FundingImpactChart({ data }: { data: FundingDatum[] }) {
       </ComposedChart>
     </ResponsiveContainer>
   );
-}
+});
 
 // Utility: transform YearlyMetric[] from funding_efficiency to FundingDatum[]
 export function toFundingData(metrics: YearlyMetric[]): FundingDatum[] {

@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { memo } from "react";
 import type { YearlyMetric } from "@/lib/types";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useChartTheme } from "./useChartTheme";
@@ -60,7 +61,7 @@ function CustomTooltip({ active, payload }: TooltipProps) {
   );
 }
 
-export function OARateChart({ data }: OARateChartProps) {
+export const OARateChart = memo(function OARateChart({ data }: OARateChartProps) {
   const { gridColor, textColor } = useChartTheme();
 
   if (!data.length) {
@@ -125,4 +126,4 @@ export function OARateChart({ data }: OARateChartProps) {
       </AreaChart>
     </ResponsiveContainer>
   );
-}
+});

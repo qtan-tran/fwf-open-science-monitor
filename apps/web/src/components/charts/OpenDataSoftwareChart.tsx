@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { memo } from "react";
 import { useChartTheme } from "./useChartTheme";
 
 export interface OpenDataSoftwareDatum {
@@ -65,7 +66,7 @@ function CustomLegend({
   );
 }
 
-export function OpenDataSoftwareChart({
+export const OpenDataSoftwareChart = memo(function OpenDataSoftwareChart({
   data,
 }: {
   data: OpenDataSoftwareDatum[];
@@ -131,4 +132,4 @@ export function OpenDataSoftwareChart({
       </LineChart>
     </ResponsiveContainer>
   );
-}
+});

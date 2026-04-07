@@ -428,14 +428,17 @@ export function ExploreView() {
     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
       {/* Tab bar */}
       <div className="overflow-x-auto border-b border-gray-100 dark:border-gray-800">
-        <div className="flex min-w-max">
+        <div role="tablist" aria-label="Explore modes" className="flex min-w-max">
           {MODES.map((m) => {
             const isActive = m.id === mode;
             return (
               <button
                 key={m.id}
-                onClick={() => setMode(m.id)}
+                role="tab"
                 aria-selected={isActive}
+                aria-controls={`tabpanel-mode-${m.id}`}
+                id={`tab-mode-${m.id}`}
+                onClick={() => setMode(m.id)}
                 className={[
                   "flex items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-colors border-b-2 -mb-px",
                   isActive
@@ -452,7 +455,12 @@ export function ExploreView() {
       </div>
 
       {/* Content */}
-      <div className="px-5 py-5">
+      <div
+        role="tabpanel"
+        id={`tabpanel-mode-${mode}`}
+        aria-labelledby={`tab-mode-${mode}`}
+        className="px-5 py-5"
+      >
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-5">{currentMode.description}</p>
         {renderContent()}
       </div>

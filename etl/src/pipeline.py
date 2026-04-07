@@ -103,7 +103,16 @@ def _step_projects(client: FWFClient, loader: DatabaseLoader) -> tuple[list[dict
         raw = client.fetch_all_projects()
         logger.info("STEP 2: Fetched %d raw projects (%s)", len(raw), _elapsed(start))
 
-        cleaned = [clean_project(p) for p in raw]
+        cleaned = []
+        skipped = 0
+        for p in raw:
+            try:
+                cleaned.append(clean_project(p))
+            except Exception as exc:
+                skipped += 1
+                logger.warning("STEP 2: skipping project %r — %s", p.get("id"), exc)
+        if skipped:
+            logger.warning("STEP 2: skipped %d malformed project(s)", skipped)
         count = loader.upsert_projects(cleaned)
         logger.info("STEP 2: Upserted %d projects (%s)", count, _elapsed(start))
         return cleaned, count, None
@@ -130,7 +139,16 @@ def _step_outputs(client: FWFClient, loader: DatabaseLoader) -> tuple[int, str |
         raw = client.fetch_all_outputs()
         logger.info("STEP 3: Fetched %d raw outputs (%s)", len(raw), _elapsed(start))
 
-        cleaned = [clean_output(o) for o in raw]
+        cleaned = []
+        skipped = 0
+        for o in raw:
+            try:
+                cleaned.append(clean_output(o))
+            except Exception as exc:
+                skipped += 1
+                logger.warning("STEP 3: skipping output %r — %s", o.get("id"), exc)
+        if skipped:
+            logger.warning("STEP 3: skipped %d malformed output(s)", skipped)
         count = loader.upsert_outputs(cleaned)
         logger.info("STEP 3: Upserted %d outputs (%s)", count, _elapsed(start))
 
@@ -163,7 +181,16 @@ def _step_further_funding(client: FWFClient, loader: DatabaseLoader) -> str | No
         raw = client.fetch_all_further_funding()
         logger.info("STEP 4: Fetched %d raw further-funding records (%s)", len(raw), _elapsed(start))
 
-        cleaned = [clean_further_funding(f) for f in raw]
+        cleaned = []
+        skipped = 0
+        for f in raw:
+            try:
+                cleaned.append(clean_further_funding(f))
+            except Exception as exc:
+                skipped += 1
+                logger.warning("STEP 4: skipping further-funding %r — %s", f.get("id"), exc)
+        if skipped:
+            logger.warning("STEP 4: skipped %d malformed further-funding record(s)", skipped)
         # further-funding has no stable external identifier — assign a
         # deterministic hash ID so upserts are idempotent across daily runs.
         for ff in cleaned:

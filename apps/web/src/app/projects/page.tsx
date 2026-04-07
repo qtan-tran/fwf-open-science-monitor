@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProjects, getInstitutionRankings, getExportUrl } from "@/lib/api-client";
+import { getProjects, getExportUrl } from "@/lib/api-client";
 import { ProjectsView } from "@/components/projects/ProjectsView";
 
 export const dynamic = "force-dynamic";
@@ -22,20 +22,16 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
   const status  = sp(params.status);
   const hasOuts = sp(params.hasOutputs);
 
-  const [projectsResult, institutionsResult] = await Promise.allSettled([
-    getProjects({
-      page,
-      limit: 20,
-      search:     search  || undefined,
-      year:       year    ? parseInt(year, 10) : undefined,
-      status:     status  || undefined,
-      hasOutputs: hasOuts === "true" ? true : hasOuts === "false" ? false : undefined,
-    }),
-    getInstitutionRankings({ sortBy: "project_count", limit: 60 }),
-  ]);
+  const projectsResult = await getProjects({
+    page,
+    limit: 20,
+    search:     search  || undefined,
+    year:       year    ? parseInt(year, 10) : undefined,
+    status:     status  || undefined,
+    hasOutputs: hasOuts === "true" ? true : hasOuts === "false" ? false : undefined,
+  }).catch(() => ({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 }));
 
-  const projects     = projectsResult.status     === "fulfilled" ? projectsResult.value     : { data: [], total: 0, page: 1, limit: 20, totalPages: 0 };
-  const institutions = institutionsResult.status === "fulfilled" ? institutionsResult.value : [];
+  const projects = projectsResult;
 
   const exportUrl = getExportUrl({
     type:   "projects",
@@ -47,7 +43,6 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
   return (
     <ProjectsView
       projects={projects}
-      institutions={institutions}
       exportUrl={exportUrl}
       filters={{ search, year, status, hasOutputs: hasOuts }}
     />

@@ -11,6 +11,7 @@ import {
   Cell,
 } from "recharts";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { memo } from "react";
 import { CHART_COLORS, useChartTheme } from "./useChartTheme";
 
 export interface CategoryDatum {
@@ -57,7 +58,7 @@ function CustomTooltip({ active, payload }: TooltipProps) {
   );
 }
 
-export function OutputCategoriesChart({ data }: { data: CategoryDatum[] }) {
+export const OutputCategoriesChart = memo(function OutputCategoriesChart({ data }: { data: CategoryDatum[] }) {
   const { gridColor, textColor } = useChartTheme();
 
   if (!data.length) {
@@ -117,4 +118,4 @@ export function OutputCategoriesChart({ data }: { data: CategoryDatum[] }) {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});

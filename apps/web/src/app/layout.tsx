@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -57,7 +58,7 @@ export default function RootLayout({
             className="flex-1 overflow-y-auto lg:ml-64"
             tabIndex={-1}
           >
-            {children}
+            <ErrorBoundary>{children}</ErrorBoundary>
           </main>
         </div>
       </body>

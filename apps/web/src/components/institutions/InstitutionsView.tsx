@@ -9,7 +9,6 @@ import {
   GitCompare,
   X,
   BarChart3,
-  ExternalLink,
   AlertTriangle,
 } from "lucide-react";
 import {

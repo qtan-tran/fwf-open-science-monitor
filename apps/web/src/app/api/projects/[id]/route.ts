@@ -122,5 +122,7 @@ export async function GET(
   };
 
   cache.set(cacheKey, detail, TTL_MS);
-  return NextResponse.json(detail);
+  return NextResponse.json(detail, {
+    headers: { "Cache-Control": "public, max-age=300, stale-while-revalidate=60" },
+  });
 }

@@ -50,8 +50,13 @@ function makeProject(id: string) {
     id,
     grantDoi: `10.55776/${id}`,
     titleEn: `Project ${id}`,
+    titleDe: null,
+    summaryEn: null,
     programEn: "Stand-Alone Projects",
     statusEn: "ongoing",
+    approvalDate: null,
+    startDate: null,
+    endDate: null,
     approvalYear: 2021,
     approvedAmount: BigInt(200_000),
     piFirstName: "Jane",
@@ -64,6 +69,8 @@ function makeProject(id: string) {
     keywords: ["open science", "data"],
     disciplinesEn: ["Life Sciences"],
     fieldsEn: ["Biology"],
+    rawJson: null,
+    lastSyncedAt: new Date("2024-01-01"),
     _count: { outputs: 2 },
   };
 }
@@ -83,15 +90,32 @@ function makeOutput(id: string) {
     journal: "Nature",
     publisher: "Springer",
     providedToOthers: false,
+    rawJson: null,
+    lastSyncedAt: new Date("2024-01-01"),
   };
 }
 
 function makeSnapshot(metricKey: string, year: number | null, value: number) {
-  return { metricKey, year, rorId: null, value, computedAt: new Date("2024-01-01") };
+  return {
+    id: `snap-${metricKey}`,
+    metricKey,
+    year,
+    rorId: null,
+    value,
+    metadata: null,
+    computedAt: new Date("2024-01-01"),
+  };
 }
 
 function makeInstitution(rorId: string) {
-  return { rorId, name: `Uni ${rorId}`, country: "AT", projectCount: 5, outputCount: 10 };
+  return {
+    rorId,
+    name: `Uni ${rorId}`,
+    country: "AT",
+    projectCount: 5,
+    outputCount: 10,
+    lastComputedAt: new Date("2024-01-01"),
+  };
 }
 
 async function callGet(params: Record<string, string> = {}) {

@@ -19,7 +19,12 @@
       "Bash(node apps/web/node_modules/.bin/tsc --noEmit --project apps/web/tsconfig.json)",
       "Bash(./node_modules/typescript/bin/tsc --noEmit)",
       "Bash(git -C /c/Users/qtran1/Documents/Coding/fwf-open-science-monitor remote -v)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(npx eslint:*)",
+      "Bash(sed -n '68,73p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/components/charts/OpenDataSoftwareChart.tsx)",
+      "Bash(sed -n '66,72p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/components/charts/InstitutionBarChart.tsx)",
+      "Bash(sed -n '85,95p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/app/api/outputs/route.ts)",
+      "Bash(sed -n '200,210p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/app/api/explore/route.ts)"
     ]
   }
 }

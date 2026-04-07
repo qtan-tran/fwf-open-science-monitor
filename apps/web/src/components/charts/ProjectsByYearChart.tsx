@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { memo } from "react";
 import type { YearlyMetric } from "@/lib/types";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useChartTheme } from "./useChartTheme";
@@ -41,7 +42,7 @@ function CustomTooltip({ active, payload }: TooltipProps) {
   );
 }
 
-export function ProjectsByYearChart({ data }: { data: YearlyMetric[] }) {
+export const ProjectsByYearChart = memo(function ProjectsByYearChart({ data }: { data: YearlyMetric[] }) {
   const { gridColor, textColor } = useChartTheme();
 
   if (!data.length) {
@@ -99,4 +100,4 @@ export function ProjectsByYearChart({ data }: { data: YearlyMetric[] }) {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+});

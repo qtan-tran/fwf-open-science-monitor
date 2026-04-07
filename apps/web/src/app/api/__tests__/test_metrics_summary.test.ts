@@ -33,13 +33,22 @@ vi.mock("@/lib/prisma", () => ({
 import { GET } from "@/app/api/metrics/summary/route";
 import { prisma } from "@/lib/prisma";
 import { cache } from "@/lib/cache";
+import type { Prisma } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function makeSnapshot(meta: Record<string, unknown>) {
-  return { metricKey: "summary", year: null, rorId: null, value: 1500, metadata: meta };
+  return {
+    id: "snap-test",
+    metricKey: "summary",
+    year: null,
+    rorId: null,
+    value: 1500,
+    metadata: meta as Prisma.JsonValue,
+    computedAt: new Date("2024-01-01"),
+  };
 }
 
 async function callGet() {
