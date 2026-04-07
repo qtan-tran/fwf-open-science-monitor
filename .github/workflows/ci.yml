@@ -31,7 +31,7 @@ jobs:
         run: npx prisma generate
 
       - name: Lint
-        run: npx next lint
+        run: npm run lint
 
       - name: Type-check
         run: npx tsc --noEmit
