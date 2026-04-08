@@ -9,19 +9,19 @@
 🌍 Sprachen:  
 🇬🇧 [English](README.md) | 🇫🇷 [Français](README.fr.md) | 🇩🇪 Deutsch | 🇻🇳 [Tiếng Việt](README.vi.md)
 
-Ein Full-Stack-Dashboard zur Verfolgung der Open-Science-Konformität über Tausende von [FWF](https://www.fwf.ac.at/en/)-finanzierten Forschungsprojekten.
+Ein Full-Stack-Dashboard, das transparent und übersichtlich zeigt, wie tausende vom [FWF](https://www.fwf.ac.at/en/) geförderte Forschungsprojekte Open-Science-Prinzipien umsetzen.
 
 ---
 
 ## 🏛️ Ursprünge und Autorschaft
 Dieses Repository wurde erstellt und wird gepflegt von **Quoc-Tan Tran**, Open Science Researcher an der **Fakultät für Soziologie, Universität Bielefeld**, mit technischer Unterstützung von **Claude AI**.
 
-Es ist so konzipiert, dass es als reproduzierbare Forschungs-Infrastruktur dient und zeigt, wie automatisierte Pipelines und moderne Web-Technologien die Transparenz in der Forschungsfinanzierung und wissenschaftlichen Outputs verbessern können.
+Alles begann als ein kleiner Versuch, Förderdaten so aufzubereiten, dass sie verständlich werden und auch von anderen nachvollzogen und weiterverwendet werden können. Es geht dabei nicht darum, ein perfektes System zu bauen, sondern zu zeigen, dass bereits einfache automatisierte Pipelines und grundlegende Web-Tools ausreichen können, um Forschungsförderung und ihre Ergebnisse transparenter und leichter zugänglich zu machen.
 
 ---
 
 ## ⚡ Die Vision
-Dieser Monitor überbrückt die Lücke zwischen Rohdaten der Finanzierung und umsetzbaren Einblicken. Er visualisiert Open-Access-Raten, Output-Trends und institutionelle Rankings, um den globalen Wandel hin zu offener, reproduzierbarer Wissenschaft zu unterstützen.
+Das Ziel ist bewusst einfach gehalten: rohe, unübersichtliche Förderdaten in etwas zu verwandeln, das man tatsächlich ansehen und verstehen kann. Indem Aspekte wie Open-Access-Raten, Publikationstrends und institutionelle Aktivitäten sichtbar gemacht werden, versucht dieser Monitor, ein klareres Bild davon zu vermitteln, was eigentlich passiert, in der Hoffnung, so zu einer offeneren und besser nachvollziehbaren Wissenschaft beizutragen.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -41,12 +41,11 @@ Dieser Monitor überbrückt die Lücke zwischen Rohdaten der Finanzierung und um
 
 ## ✨ Wichtige Funktionen
 
-- **📊 Sechs-Achsen-Dashboard** — Übersichtsmetriken (OA-Raten, Finanzierungseffizienz) mit interaktiven Recharts-Visualisierungen.
-- **🔍 Tiefgehender Explorer** — 10 einzigartige Analysemodi einschließlich Forscher-Suche, Publikations-Aufschlüsselungen und Finanzierungs-Scatterplots.
-- **⚡ Hochleistungs-ETL** — Python 3.12-Pipeline, die täglich synchronisiert, bereinigt und Metriken aus der FWF Open Research API berechnet.
-- **🚀 Produktionsbereit** — In-Memory-LRU-Cache (5-Min-TTL), vollständige Typsicherheit mit Prisma und systembewusster Dark Mode.
-- **📦 Ein-Kommando-Setup** — Vollständig containerisierte Umgebung für sofortige lokale Entwicklung und Tests.
-
+- **📊 Dashboard mit 6 Kennzahlen** — Zeigt wichtige Metriken (Open-Access-Raten, Effizienz der Förderung) mit interaktiven Diagrammen (Recharts).
+- **🔍 Detaillierte Analyse** — 10 verschiedene Analysemodi, z. B. Forschersuche, Auswertung von Publikationen und Finanzierungsdiagramme.
+- **⚡ Schnelle Datenverarbeitung** — Python-3.12-Pipeline, die Daten täglich aus der FWF Open Research API lädt, bereinigt und auswertet.
+- **🚀 Bereit für den Einsatz** — In-Memory-Cache (5 Minuten), sichere Typen mit Prisma und automatischer Dark Mode.
+- **📦 Start mit einem Befehl** — Komplett containerisierte Umgebung (Docker) für schnelle lokale Entwicklung und Tests.
 ---
 
 ## 🚀 Schnellstart (Localhost)
@@ -235,4 +234,4 @@ Beiträge sind willkommen! Wenn Sie die Diagramme verbessern, einen neuen "Explo
 ---
 
 **Gebaut mit ❤️ für Open Science.**  
-*Wenn Sie dieses Projekt nützlich finden, geben Sie ihm bitte einen ⭐, um anderen zu helfen, es zu finden!*
+*Dieses Projekt ist ein Versuch, Open-Science-Daten zugänglicher und leichter erkundbar zu machen. Wenn es für Sie nützlich ist, freue ich mich über ein ⭐.*
