@@ -175,30 +175,29 @@ def _normalise_ror(raw_ror: str | None) -> str | None:
 
 
 def _extract_fwf_id_from_project_id(raw_id: str | None) -> str | None:
-    """Strip the ``'project-'`` prefix from a Meilisearch project document ID.
+    """Strip the ``'projects-'`` prefix from a Meilisearch project document ID.
 
-    The FWF API uses ``project-<ID>`` as the document id (e.g. ``"project-DOC32"``).
+    The FWF API uses ``projects-<ID>`` as the document id (e.g. ``"projects-DOC32"``).
 
-    >>> _extract_fwf_id_from_project_id("project-DOC32")
+    >>> _extract_fwf_id_from_project_id("projects-DOC32")
     'DOC32'
     """
     if not raw_id:
         return None
-    prefix = "project-"
+    prefix = "projects-"
     if raw_id.startswith(prefix):
         return raw_id[len(prefix):]
     return raw_id  # unexpected format — return as-is rather than losing it
 
 
 def _strip_projects_prefix(project_ref: str) -> str:
-    """Strip the ``'project.'`` prefix from an output's connected-project reference.
+    """Strip the ``'projects-'`` prefix from an output's connected-project reference.
 
-    Output documents reference their linked projects as ``'project.<ID>'``
-    (e.g. ``"project.DOC32"``), while project document IDs use a hyphen
-    (``"project-DOC32"``).  Stripping the ``'project.'`` prefix from the
+    Output documents reference their linked projects as ``'projects-<ID>'``
+    (e.g. ``"projects-DOC32"``).  Stripping the ``'projects-'`` prefix from the
     reference yields the bare FWF ID that matches the stored ``Project.id``.
     """
-    prefix = "project."
+    prefix = "projects-"
     return project_ref[len(prefix):] if project_ref.startswith(prefix) else project_ref
 
 

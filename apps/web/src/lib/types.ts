@@ -40,7 +40,7 @@ export interface InstitutionRanking {
 
 export interface ProjectListItem {
   id: string;
-  grantDoi: string;
+  grantDoi: string | null;
   titleEn: string;
   programEn: string | null;
   statusEn: string | null;
@@ -70,7 +70,7 @@ export interface FurtherFundingItem {
 
 export interface ProjectDetail {
   id: string;
-  grantDoi: string;
+  grantDoi: string | null;
   titleEn: string;
   titleDe: string | null;
   summaryEn: string | null;

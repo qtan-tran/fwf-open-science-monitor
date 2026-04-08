@@ -30,7 +30,11 @@
       "Bash(curl -s \"http://localhost:3000/api/metrics/yearly?metric=oa_rate\")",
       "Bash(curl -s \"http://localhost:3000/api/metrics/institutions?limit=3\")",
       "Bash(curl -s \"http://localhost:3000/api/projects?limit=3\")",
-      "Bash(curl -s \"http://localhost:3000/api/outputs?limit=3\")"
+      "Bash(curl -s \"http://localhost:3000/api/outputs?limit=3\")",
+      "Bash(node_modules/.bin/eslint src/ --ext .ts,.tsx)",
+      "Bash(ls C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/node_modules/.bin/eslint*)",
+      "Bash(ls C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/node_modules/.bin/eslint*)",
+      "Bash(../../node_modules/.bin/eslint src/)"
     ]
   }
 }

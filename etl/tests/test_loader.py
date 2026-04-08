@@ -350,6 +350,7 @@ class TestLinkProjectsOutputs:
     @patch("src.loader.execute_values")
     def test_returns_pair_count(self, mock_ev):
         loader = _make_mock_loader()
+        loader._mock_cursor.fetchall.return_value = [("P1",), ("P2",), ("P3",)]
         mapping = {"out-1": ["P1", "P2"], "out-2": ["P3"]}
         result = loader.link_projects_outputs(mapping)
         assert result == 3
@@ -363,6 +364,7 @@ class TestLinkProjectsOutputs:
     @patch("src.loader.execute_values")
     def test_sql_uses_correct_join_table(self, mock_ev):
         loader = _make_mock_loader()
+        loader._mock_cursor.fetchall.return_value = [("P1",)]
         loader.link_projects_outputs({"out-1": ["P1"]})
         sql = mock_ev.call_args[0][1]
         assert "_ProjectOutputs" in sql
@@ -374,6 +376,7 @@ class TestLinkProjectsOutputs:
     @patch("src.loader.execute_values")
     def test_pairs_passed_correctly(self, mock_ev):
         loader = _make_mock_loader()
+        loader._mock_cursor.fetchall.return_value = [("P1",)]
         loader.link_projects_outputs({"out-A": ["P1"]})
         rows = mock_ev.call_args[0][2]
         assert ("out-A", "P1") in rows
@@ -389,6 +392,7 @@ class TestLinkProjectsOutputs:
     @patch("src.loader.execute_values")
     def test_commits(self, mock_ev):
         loader = _make_mock_loader()
+        loader._mock_cursor.fetchall.return_value = [("P1",)]
         loader.link_projects_outputs({"out-1": ["P1"]})
         loader._conn.commit.assert_called_once()
 
@@ -442,12 +446,14 @@ class TestLinkProjectsFunding:
     @patch("src.loader.execute_values")
     def test_returns_count(self, mock_ev):
         loader = _make_mock_loader()
+        loader._mock_cursor.fetchall.return_value = [("P1",), ("P2",)]
         result = loader.link_projects_funding({"ff-1": ["P1", "P2"]})
         assert result == 2
 
     @patch("src.loader.execute_values")
     def test_sql_uses_correct_join_table(self, mock_ev):
         loader = _make_mock_loader()
+        loader._mock_cursor.fetchall.return_value = [("P1",)]
         loader.link_projects_funding({"ff-1": ["P1"]})
         sql = mock_ev.call_args[0][1]
         assert "_ProjectFurtherFunding" in sql
