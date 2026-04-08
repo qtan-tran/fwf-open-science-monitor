@@ -9,7 +9,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ---------------------------------------------------------------------------
@@ -23,7 +22,7 @@ model Project {
   id                String    @id
 
   /// Stable grant DOI from _str.grantdoi, e.g. "10.55776/DOC32"
-  grantDoi          String    @unique
+  grantDoi          String?   @unique
 
   /// _str.projecttitle.en
   titleEn           String

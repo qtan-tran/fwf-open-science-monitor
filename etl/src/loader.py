@@ -214,41 +214,45 @@ class DatabaseLoader:
         total = 0
         now = _now_utc()
 
-        with self._cursor() as cur:
-            for batch in _batched(projects, self._batch_size):
-                rows = [
-                    (
-                        p["id"],
-                        p.get("grantDoi") or "",
-                        p.get("titleEn") or "",
-                        p.get("titleDe"),
-                        p.get("summaryEn"),
-                        p.get("programEn"),
-                        p.get("statusEn"),
-                        p.get("approvalDate"),
-                        p.get("startDate"),
-                        p.get("endDate"),
-                        p.get("approvedAmount"),
-                        p.get("approvalYear"),
-                        p.get("piFirstName"),
-                        p.get("piLastName"),
-                        p.get("piOrcid"),
-                        p.get("piRole"),
-                        p.get("piInstitutionName"),
-                        p.get("piInstitutionRor"),
-                        p.get("researchRadarUrl"),
-                        p.get("keywords") or [],
-                        p.get("disciplinesEn") or [],
-                        p.get("fieldsEn") or [],
-                        psycopg2.extras.Json(p.get("rawJson")),
-                        now,
-                    )
-                    for p in batch
-                ]
-                execute_values(cur, sql, rows)
-                total += len(batch)
-                logger.info("upsert_projects: %d/%d rows processed", total, len(projects))
-            self._conn.commit()
+        try:
+            with self._cursor() as cur:
+                for batch in _batched(projects, self._batch_size):
+                    rows = [
+                        (
+                            p["id"],
+                            p.get("grantDoi"),
+                            p.get("titleEn") or "",
+                            p.get("titleDe"),
+                            p.get("summaryEn"),
+                            p.get("programEn"),
+                            p.get("statusEn"),
+                            p.get("approvalDate"),
+                            p.get("startDate"),
+                            p.get("endDate"),
+                            p.get("approvedAmount"),
+                            p.get("approvalYear"),
+                            p.get("piFirstName"),
+                            p.get("piLastName"),
+                            p.get("piOrcid"),
+                            p.get("piRole"),
+                            p.get("piInstitutionName"),
+                            p.get("piInstitutionRor"),
+                            p.get("researchRadarUrl"),
+                            p.get("keywords") or [],
+                            p.get("disciplinesEn") or [],
+                            p.get("fieldsEn") or [],
+                            psycopg2.extras.Json(p.get("rawJson")),
+                            now,
+                        )
+                        for p in batch
+                    ]
+                    execute_values(cur, sql, rows)
+                    total += len(batch)
+                    logger.info("upsert_projects: %d/%d rows processed", total, len(projects))
+                self._conn.commit()
+        except Exception:
+            self._conn.rollback()
+            raise
 
         logger.info("upsert_projects: committed %d rows", total)
         return total
@@ -283,6 +287,14 @@ class DatabaseLoader:
         """
         if not outputs:
             return 0
+
+        # Deduplicate by id within this batch. The hash-based stable ID can
+        # collide when two outputs share title+category+year; a single VALUES
+        # clause with duplicate conflict-key rows causes CardinalityViolation.
+        seen: dict[str, dict] = {}
+        for o in outputs:
+            seen.setdefault(o["id"], o)
+        outputs = list(seen.values())
 
         # Two-pass strategy:
         # 1. Insert/update by DOI for records that have one.
@@ -337,30 +349,34 @@ class DatabaseLoader:
                 now,
             )
 
-        with self._cursor() as cur:
-            # Pass 1: DOI records — conflict on doi
-            if doi_outputs:
-                sql_doi = f"""
-                    INSERT INTO "Output" {_cols} VALUES %s
-                    ON CONFLICT (doi) DO UPDATE SET {_set_clause}
-                """
-                for batch in _batched(doi_outputs, self._batch_size):
-                    execute_values(cur, sql_doi, [_row(o) for o in batch])
-                    total += len(batch)
-                    logger.info("upsert_outputs (doi): %d/%d", total, len(outputs))
+        try:
+            with self._cursor() as cur:
+                # Pass 1: DOI records — conflict on doi
+                if doi_outputs:
+                    sql_doi = f"""
+                        INSERT INTO "Output" {_cols} VALUES %s
+                        ON CONFLICT (doi) DO UPDATE SET {_set_clause}
+                    """
+                    for batch in _batched(doi_outputs, self._batch_size):
+                        execute_values(cur, sql_doi, [_row(o) for o in batch])
+                        total += len(batch)
+                        logger.info("upsert_outputs (doi): %d/%d", total, len(outputs))
 
-            # Pass 2: hash-id records — conflict on id
-            if hash_outputs:
-                sql_id = f"""
-                    INSERT INTO "Output" {_cols} VALUES %s
-                    ON CONFLICT (id) DO UPDATE SET {_set_clause}
-                """
-                for batch in _batched(hash_outputs, self._batch_size):
-                    execute_values(cur, sql_id, [_row(o) for o in batch])
-                    total += len(batch)
-                    logger.info("upsert_outputs (hash): %d/%d", total, len(outputs))
+                # Pass 2: hash-id records — conflict on id
+                if hash_outputs:
+                    sql_id = f"""
+                        INSERT INTO "Output" {_cols} VALUES %s
+                        ON CONFLICT (id) DO UPDATE SET {_set_clause}
+                    """
+                    for batch in _batched(hash_outputs, self._batch_size):
+                        execute_values(cur, sql_id, [_row(o) for o in batch])
+                        total += len(batch)
+                        logger.info("upsert_outputs (hash): %d/%d", total, len(outputs))
 
-            self._conn.commit()
+                self._conn.commit()
+        except Exception:
+            self._conn.rollback()
+            raise
 
         logger.info("upsert_outputs: committed %d rows", total)
         return total
@@ -398,6 +414,20 @@ class DatabaseLoader:
         if not pairs:
             return 0
 
+        # Filter out project IDs that were not fetched (API caps at 10 000 records).
+        # Without this, FK violations abort the entire link step.
+        with self._cursor() as cur:
+            cur.execute('SELECT id FROM "Project"')
+            valid_ids = {row[0] for row in cur.fetchall()}
+        before = len(pairs)
+        pairs = [(a, b) for a, b in pairs if b in valid_ids]
+        skipped = before - len(pairs)
+        if skipped:
+            logger.warning("link_projects_outputs: skipping %d pairs — project not in DB", skipped)
+
+        if not pairs:
+            return 0
+
         sql = f"""
             INSERT INTO "{_JOIN_OUTPUT_PROJECT}" ("A", "B")
             VALUES %s
@@ -405,11 +435,15 @@ class DatabaseLoader:
         """
 
         total = 0
-        with self._cursor() as cur:
-            for batch in _batched(pairs, self._batch_size):
-                execute_values(cur, sql, batch)
-                total += len(batch)
-            self._conn.commit()
+        try:
+            with self._cursor() as cur:
+                for batch in _batched(pairs, self._batch_size):
+                    execute_values(cur, sql, batch)
+                    total += len(batch)
+                self._conn.commit()
+        except Exception:
+            self._conn.rollback()
+            raise
 
         logger.info("link_projects_outputs: %d pairs processed", total)
         return total
@@ -439,6 +473,12 @@ class DatabaseLoader:
         if not funding:
             return 0
 
+        # Deduplicate by id — hash collisions within a batch cause CardinalityViolation.
+        seen: dict[str, dict] = {}
+        for f in funding:
+            seen.setdefault(f["id"], f)
+        funding = list(seen.values())
+
         sql = """
             INSERT INTO "FurtherFunding" (
                 id, funder, "fundingId", country, sector,
@@ -462,29 +502,33 @@ class DatabaseLoader:
         total = 0
         now = _now_utc()
 
-        with self._cursor() as cur:
-            for batch in _batched(funding, self._batch_size):
-                rows = [
-                    (
-                        f["id"],
-                        f.get("funder"),
-                        f.get("fundingId"),
-                        f.get("country"),
-                        f.get("sector"),
-                        f.get("title"),
-                        f.get("doi"),
-                        f.get("type"),
-                        f.get("startYear"),
-                        f.get("endYear"),
-                        f.get("funderProjectUrl"),
-                        now,
-                    )
-                    for f in batch
-                ]
-                execute_values(cur, sql, rows)
-                total += len(batch)
-                logger.info("upsert_further_funding: %d/%d rows processed", total, len(funding))
-            self._conn.commit()
+        try:
+            with self._cursor() as cur:
+                for batch in _batched(funding, self._batch_size):
+                    rows = [
+                        (
+                            f["id"],
+                            f.get("funder"),
+                            f.get("fundingId"),
+                            f.get("country"),
+                            f.get("sector"),
+                            f.get("title"),
+                            f.get("doi"),
+                            f.get("type"),
+                            f.get("startYear"),
+                            f.get("endYear"),
+                            f.get("funderProjectUrl"),
+                            now,
+                        )
+                        for f in batch
+                    ]
+                    execute_values(cur, sql, rows)
+                    total += len(batch)
+                    logger.info("upsert_further_funding: %d/%d rows processed", total, len(funding))
+                self._conn.commit()
+        except Exception:
+            self._conn.rollback()
+            raise
 
         logger.info("upsert_further_funding: committed %d rows", total)
         return total
@@ -519,6 +563,19 @@ class DatabaseLoader:
         if not pairs:
             return 0
 
+        # Filter out project IDs not present in the DB (API result-set cap).
+        with self._cursor() as cur:
+            cur.execute('SELECT id FROM "Project"')
+            valid_ids = {row[0] for row in cur.fetchall()}
+        before = len(pairs)
+        pairs = [(a, b) for a, b in pairs if b in valid_ids]
+        skipped = before - len(pairs)
+        if skipped:
+            logger.warning("link_projects_funding: skipping %d pairs — project not in DB", skipped)
+
+        if not pairs:
+            return 0
+
         sql = f"""
             INSERT INTO "{_JOIN_FUNDING_PROJECT}" ("A", "B")
             VALUES %s
@@ -526,11 +583,15 @@ class DatabaseLoader:
         """
 
         total = 0
-        with self._cursor() as cur:
-            for batch in _batched(pairs, self._batch_size):
-                execute_values(cur, sql, batch)
-                total += len(batch)
-            self._conn.commit()
+        try:
+            with self._cursor() as cur:
+                for batch in _batched(pairs, self._batch_size):
+                    execute_values(cur, sql, batch)
+                    total += len(batch)
+                self._conn.commit()
+        except Exception:
+            self._conn.rollback()
+            raise
 
         logger.info("link_projects_funding: %d pairs processed", total)
         return total
@@ -566,19 +627,23 @@ class DatabaseLoader:
         """
 
         total = 0
-        with self._cursor() as cur:
-            for batch in _batched(institutions, self._batch_size):
-                rows = [
-                    (
-                        inst["rorId"],
-                        inst.get("name") or inst["rorId"],
-                        inst.get("country") or "AT",
-                    )
-                    for inst in batch
-                ]
-                execute_values(cur, sql, rows)
-                total += len(batch)
-            self._conn.commit()
+        try:
+            with self._cursor() as cur:
+                for batch in _batched(institutions, self._batch_size):
+                    rows = [
+                        (
+                            inst["rorId"],
+                            inst.get("name") or inst["rorId"],
+                            inst.get("country") or "AT",
+                        )
+                        for inst in batch
+                    ]
+                    execute_values(cur, sql, rows)
+                    total += len(batch)
+                self._conn.commit()
+        except Exception:
+            self._conn.rollback()
+            raise
 
         logger.info("upsert_institutions: committed %d rows", total)
         return total
@@ -614,8 +679,8 @@ class DatabaseLoader:
             )
             UPDATE "Institution" i
             SET
-                "projectCount"  = COALESCE(pc.cnt, 0),
-                "outputCount"   = COALESCE(oc.cnt, 0),
+                "projectCount"   = counts.proj_cnt,
+                "outputCount"    = counts.out_cnt,
                 "lastComputedAt" = NOW()
             FROM (
                 SELECT ror_id,

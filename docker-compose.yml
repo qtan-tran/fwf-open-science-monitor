@@ -31,6 +31,7 @@ services:
     environment:
       # Override DATABASE_URL so the container reaches db by service name.
       DATABASE_URL: postgresql://postgres:postgres@db:5432/fwf_monitor
+      DIRECT_URL: postgresql://postgres:postgres@db:5432/fwf_monitor
       NODE_ENV: production
 
   etl:

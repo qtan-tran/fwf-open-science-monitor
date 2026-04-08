@@ -24,7 +24,13 @@
       "Bash(sed -n '68,73p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/components/charts/OpenDataSoftwareChart.tsx)",
       "Bash(sed -n '66,72p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/components/charts/InstitutionBarChart.tsx)",
       "Bash(sed -n '85,95p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/app/api/outputs/route.ts)",
-      "Bash(sed -n '200,210p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/app/api/explore/route.ts)"
+      "Bash(sed -n '200,210p' C:/Users/qtran1/Documents/Coding/fwf-open-science-monitor/apps/web/src/app/api/explore/route.ts)",
+      "Bash(docker compose:*)",
+      "Bash(curl -s http://localhost:3000/api/metrics/summary)",
+      "Bash(curl -s \"http://localhost:3000/api/metrics/yearly?metric=oa_rate\")",
+      "Bash(curl -s \"http://localhost:3000/api/metrics/institutions?limit=3\")",
+      "Bash(curl -s \"http://localhost:3000/api/projects?limit=3\")",
+      "Bash(curl -s \"http://localhost:3000/api/outputs?limit=3\")"
     ]
   }
 }

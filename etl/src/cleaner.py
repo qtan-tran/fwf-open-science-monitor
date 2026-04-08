@@ -53,18 +53,25 @@ _ROR_URL_PREFIX = "https://ror.org/"
 # ---------------------------------------------------------------------------
 
 def safe_get(d: dict, path: str, default: Any = None) -> Any:
-    """Navigate a dot-separated path through nested dicts.
+    """Return the value at *path* from *d*.
 
-    Returns *default* if any key along the path is missing, None, or if an
-    intermediate value is not a dict.
+    The FWF API returns flat dicts with dotted keys (e.g. ``{"_str.category": "publications"}``).
+    This function tries the full dotted string as a flat key first, then falls back to
+    navigating nested dicts — so it works correctly with both API response shapes.
 
     Examples
     --------
+    >>> safe_get({"_str.grantdoi": "10.55776/P1"}, "_str.grantdoi")
+    '10.55776/P1'
     >>> safe_get({"_str": {"grantdoi": "10.55776/P1"}}, "_str.grantdoi")
     '10.55776/P1'
     >>> safe_get({}, "_str.missing.field")  # no KeyError
     None
     """
+    # Fast path: flat dotted key (matches the actual FWF API response format)
+    if isinstance(d, dict) and path in d:
+        return d[path]
+    # Fallback: navigate nested dicts segment by segment
     node: Any = d
     for key in path.split("."):
         if not isinstance(node, dict):
@@ -168,22 +175,30 @@ def _normalise_ror(raw_ror: str | None) -> str | None:
 
 
 def _extract_fwf_id_from_project_id(raw_id: str | None) -> str | None:
-    """Strip the ``'projects-'`` prefix from a Meilisearch document ID.
+    """Strip the ``'project-'`` prefix from a Meilisearch project document ID.
 
-    >>> _extract_fwf_id_from_project_id("projects-DOC32")
+    The FWF API uses ``project-<ID>`` as the document id (e.g. ``"project-DOC32"``).
+
+    >>> _extract_fwf_id_from_project_id("project-DOC32")
     'DOC32'
     """
     if not raw_id:
         return None
-    prefix = "projects-"
+    prefix = "project-"
     if raw_id.startswith(prefix):
         return raw_id[len(prefix):]
     return raw_id  # unexpected format — return as-is rather than losing it
 
 
 def _strip_projects_prefix(project_ref: str) -> str:
-    """Strip ``'projects-'`` from a connected-project reference."""
-    prefix = "projects-"
+    """Strip the ``'project.'`` prefix from an output's connected-project reference.
+
+    Output documents reference their linked projects as ``'project.<ID>'``
+    (e.g. ``"project.DOC32"``), while project document IDs use a hyphen
+    (``"project-DOC32"``).  Stripping the ``'project.'`` prefix from the
+    reference yields the bare FWF ID that matches the stored ``Project.id``.
+    """
+    prefix = "project."
     return project_ref[len(prefix):] if project_ref.startswith(prefix) else project_ref
 
 
@@ -253,7 +268,7 @@ def clean_project(raw: dict) -> dict:
 
     return {
         "id":                fwf_id or "",
-        "grantDoi":          _str_or_none(safe_get(raw, "_str.grantdoi")) or "",
+        "grantDoi":          _str_or_none(safe_get(raw, "_str.grantdoi")),
         "titleEn":           _str_or_none(safe_get(raw, "_str.projecttitle.en")) or "",
         "titleDe":           _str_or_none(safe_get(raw, "_str.projecttitle.de")),
         "summaryEn":         _str_or_none(safe_get(raw, "_str.prproposalsummary.en")),
