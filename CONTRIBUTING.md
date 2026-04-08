@@ -50,7 +50,10 @@ cd fwf-open-science-monitor
 git remote add upstream https://github.com/qtan-tran/fwf-open-science-monitor.git
 
 # 3. Copy environment variables
+# macOS / Linux
 cp .env.example .env
+# Windows (PowerShell)
+Copy-Item .env.example .env
 # Edit .env if you want to run the ETL (FWF_API_KEY is optional for UI work)
 
 # 4. Start the database
@@ -59,8 +62,8 @@ docker compose up db -d
 # 5. Set up the web app
 cd apps/web
 npm install
-npx prisma migrate dev
 npx prisma generate
+npx prisma db push
 npm run dev          # → http://localhost:3000
 
 # 6. Set up the ETL (only needed for ETL work)
@@ -244,9 +247,7 @@ or real random values in assertions. Mock `datetime` or pass it as a parameter.
 
 ### SQL (in ETL)
 
-- All SQL strings use `%s` parameter placeholders (never string interpolation)
-- `DELETE … WHERE` before `INSERT` (the `_store_metric` pattern) — no `UPSERT`
-  with fragile `ON CONFLICT` key lists
+- Use `ON CONFLICT DO UPDATE` for upserts. Always use `%s` parameter placeholders — never string interpolation.
 
 ---
 
@@ -264,6 +265,4 @@ the browser/OS, the URL where it happened, and any console errors.
 
 ## Questions
 
-Open a [GitHub Discussion](https://github.com/qtan-tran/fwf-open-science-monitor/discussions)
-for questions that are not bugs or feature requests. Issues are for actionable
-work items only.
+Open a GitHub Issue with the label `question` for questions that are not bugs or feature requests.
