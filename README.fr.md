@@ -9,19 +9,19 @@
 🌍 Langues :  
 🇬🇧 [English](README.md) | 🇫🇷 Français | 🇩🇪 [Deutsch](README.de.md) | 🇻🇳 [Tiếng Việt](README.vi.md)
 
-Un tableau de bord full-stack suivant la conformité à la science ouverte sur des milliers de projets de recherche financés par le [FWF](https://www.fwf.ac.at/en/).
+Un tableau de bord full-stack qui permet de suivre, de manière claire et concrète, le respect des pratiques de science ouverte à travers des milliers de projets financés par le [FWF](https://www.fwf.ac.at/en/).
 
 ---
 
 ## 🏛️ Origines et Auteurs
 Ce dépôt a été créé et est maintenu par **Quoc-Tan Tran**, Chercheur en Science Ouverte à la **Faculté de Sociologie, Université de Bielefeld**, avec l'assistance technique de **Claude AI**.
 
-Il est conçu pour servir d'infrastructure de recherche reproductible, montrant comment les pipelines automatisés et les technologies web modernes peuvent améliorer la transparence dans le financement de la recherche et les outputs scientifiques.
+Tout a commencé par une tentative simple : donner du sens aux données de financement, de manière à ce que d’autres puissent aussi les comprendre, les suivre et les réutiliser. L’objectif n’est pas de construire un système parfait, mais de montrer que, même avec des pipelines automatisés simples et des outils web accessibles, il est déjà possible de rendre les financements de la recherche et leurs résultats plus transparents et plus faciles à explorer.
 
 ---
 
 ## ⚡ La Vision
-Ce moniteur comble le fossé entre les données brutes de financement et les insights actionnables. Il visualise les taux d'accès ouvert, les tendances des outputs et les classements institutionnels pour soutenir le mouvement mondial vers une science ouverte et reproductible.
+L’ambition est volontairement claire : transformer des données de financement brutes et désordonnées en quelque chose de lisible et compréhensible. En mettant en lumière des éléments comme les taux d’accès ouvert, les tendances de publication ou encore l’activité des institutions, ce monitor cherche à offrir une vision plus nette de ce qui se passe réellement, avec l’espoir de contribuer, concrètement, à une science plus ouverte et reproductible.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -39,13 +39,13 @@ Ce moniteur comble le fossé entre les données brutes de financement et les ins
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-## ✨ Fonctionnalités Clés
+## ✨ Fonctionnalités Principales
 
-- **📊 Tableau de Bord Six Axes** — Métriques principales (taux OA, efficacité du financement) avec visualisations interactives Recharts.
-- **🔍 Explorateur Approfondi** — 10 modes d'analyse uniques incluant la recherche de chercheurs, les décompositions de publications et les scatter plots de financement.
-- **⚡ ETL Haute Performance** — Pipeline Python 3.12 qui synchronise quotidiennement, nettoie et calcule les métriques depuis l'API FWF Open Research.
-- **🚀 Prêt pour la Production** — Cache LRU en mémoire (TTL 5 min), sécurité de type complète avec Prisma, et mode sombre adapté au système.
-- **📦 Configuration en Une Commande** — Environnement entièrement containerisé pour un développement et test locaux instantanés.
+- **📊 Dashboard à 6 indicateurs** — Affiche les métriques importantes (taux d’accès ouvert, efficacité du financement) avec des graphiques interactifs (Recharts).
+- **🔍 Exploration détaillée** — 10 modes d’analyse différents, dont la recherche de chercheurs, l’analyse des publications et des graphiques de financement.
+- **⚡ Traitement rapide des données** — Pipeline en Python 3.12 qui met à jour, nettoie et calcule les données chaque jour depuis l’API FWF Open Research.
+- **🚀 Prêt pour la production** — Cache en mémoire (5 minutes), sécurité des types avec Prisma, et mode sombre adapté au système.
+- **📦 Lancement en une commande** — Environnement Docker prêt à l’emploi pour développer et tester rapidement en local.
 
 ---
 
@@ -235,4 +235,4 @@ Les contributions sont les bienvenues ! Si vous voulez améliorer les graphiques
 ---
 
 **Construit avec ❤️ pour la Science Ouverte.**  
-*Si vous trouvez ce projet utile, pensez à lui donner une ⭐ pour aider les autres à le trouver !*
+*Si vous trouvez ce projet utile, pensez à donner une ⭐ pour aider les autres à le trouver !*
