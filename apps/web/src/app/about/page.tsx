@@ -153,8 +153,8 @@ export default function AboutPage() {
             The FWF Open Science Monitor is a monitoring platform that tracks open-science
             compliance across research projects funded by the{" "}
             <ExtLink href="https://www.fwf.ac.at/en">Austrian Science Fund (FWF)</ExtLink>.
-            It measures and visualises key indicators — open-access publication rates, open data
-            adoption, open software practices, and funding trends — across institutions, disciplines,
+            It measures and visualises key indicators – open-access publication rates, open data
+            adoption, open software practices, and funding trends – across institutions, disciplines,
             and years.
           </p>
           <p>
@@ -168,6 +168,13 @@ export default function AboutPage() {
               View the source on GitHub
             </ExtLink>
             .
+          </p>
+          <p>
+            The FWF Open Science Monitor platform was developed and is maintained by{" "}
+            <ExtLink href="https://github.com/qtan-tran">Quoc-Tan Tran</ExtLink>,
+            Open Science researcher at the Faculty of Sociology,{" "}
+            <ExtLink href="https://www.uni-bielefeld.de/">Bielefeld University</ExtLink>,
+            with technical support provided by Claude AI.
           </p>
         </div>
       </Section>
@@ -186,7 +193,7 @@ export default function AboutPage() {
               </dt>
               <dd className="text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
                 <ExtLink href="https://openapi.fwf.ac.at">openapi.fwf.ac.at</ExtLink>
-                {" — "}the primary source for all project, output, institution, and funding
+                {" – "}the primary source for all project, output, institution, and funding
                 data. The API is maintained by FWF and updated daily. Coverage spans
                 FWF-funded projects from <strong className="text-gray-700 dark:text-gray-300">1995 onwards</strong>.
               </dd>
@@ -204,7 +211,7 @@ export default function AboutPage() {
                 <ExtLink href="https://creativecommons.org/publicdomain/zero/1.0/">
                   Creative Commons CC0 1.0
                 </ExtLink>{" "}
-                (public domain) licence — it may be freely used, copied, and redistributed
+                (public domain) licence – it may be freely used, copied, and redistributed
                 without restriction.
               </dd>
             </div>
@@ -222,13 +229,13 @@ export default function AboutPage() {
               <ul className="mt-2 space-y-1.5 text-gray-500 dark:text-gray-400">
                 <li className="flex gap-2">
                   <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">Researchfish</span>
-                  — PI-reported outputs submitted annually by grant holders. Includes
+                  – PI-reported outputs submitted annually by grant holders. Includes
                   publications, research data, software, science-communication activities,
                   and further funding.
                 </li>
                 <li className="flex gap-2">
                   <span className="font-medium text-gray-600 dark:text-gray-300 flex-shrink-0">Dimensions</span>
-                  — Automated bibliometric matching that enriches outputs with DOIs, PubMed
+                  – Automated bibliometric matching that enriches outputs with DOIs, PubMed
                   IDs, citation counts, and journal metadata.
                 </li>
               </ul>
@@ -397,17 +404,24 @@ export default function AboutPage() {
                 <ExtLink href="https://creativecommons.org/publicdomain/zero/1.0/">
                   CC0 1.0
                 </ExtLink>{" "}
-                — no rights reserved. No attribution is required, but citing the source
+                – no rights reserved. No attribution is required, but citing the source
                 is appreciated.
               </p>
             </div>
           </div>
           <div>
             <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">How to cite</p>
-            <div className="rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30 px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-              FWF Open Science Monitor (2025). Open-science metrics for FWF-funded research.
-              Available at: https://github.com/qtan-tran/fwf-open-science-monitor.
-              Data source: FWF Open API (CC0), https://openapi.fwf.ac.at.
+            <div className="rounded-lg border-l-4 border-primary-300 dark:border-primary-700 border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30 px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400 leading-relaxed space-y-2">
+              <p>
+                Tran, Q.-T. (2025). Open-science metrics for FWF-funded research. GitHub.{" "}
+                <ExtLink href="https://github.com/qtan-tran/fwf-open-science-monitor">
+                  https://github.com/qtan-tran/fwf-open-science-monitor
+                </ExtLink>
+              </p>
+              <p className="text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700 pt-2">
+                Data source: FWF Open API (CC0).{" "}
+                <ExtLink href="https://openapi.fwf.ac.at">https://openapi.fwf.ac.at</ExtLink>
+              </p>
             </div>
           </div>
         </div>
@@ -419,7 +433,7 @@ export default function AboutPage() {
       <Section icon={GitFork} title="Contributing">
         <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
           <p>
-            Contributions are welcome — whether that is a bug fix, a new metric, improved
+            Contributions are welcome – whether that is a bug fix, a new metric, improved
             documentation, or a question.
           </p>
           <ul className="space-y-2">
