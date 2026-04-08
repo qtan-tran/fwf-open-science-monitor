@@ -171,7 +171,7 @@ export default function AboutPage() {
           </p>
           <p>
             The FWF Open Science Monitor platform was developed and is maintained by{" "}
-            <ExtLink href="https://github.com/qtan-tran">Quoc-Tan Tran</ExtLink>,
+            <ExtLink href="https://www.linkedin.com/in/qtantran/">Quoc-Tan Tran</ExtLink>,
             Open Science researcher at the Faculty of Sociology,{" "}
             <ExtLink href="https://www.uni-bielefeld.de/">Bielefeld University</ExtLink>,
             with technical support provided by Claude AI.
