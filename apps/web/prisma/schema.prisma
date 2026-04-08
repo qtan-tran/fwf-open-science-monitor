@@ -7,8 +7,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Pooled connection string — used for all runtime queries.
+  // For Neon: use the pooled endpoint (pgBouncer).
+  // For Supabase: use the Transaction pooler connection string.
+  url       = env("DATABASE_URL")
+  // Direct (non-pooled) connection — required by Prisma Migrate / db push.
+  // For Neon: the non-pooled endpoint.
+  // For Supabase: the direct connection string (port 5432, not 6543).
+  // Leave unset for local development (url is already a direct connection).
+  directUrl = env("DIRECT_URL")
 }
 
 // ---------------------------------------------------------------------------

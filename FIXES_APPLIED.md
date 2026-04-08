@@ -111,6 +111,47 @@ Next.js build: clean (no errors, all 19 routes compiled).
 
 ---
 
+## Vercel Deployment Fixes
+
+- **`apps/web/package.json` — `build` script**: changed `"next build"` →
+  `"prisma generate && next build"`. Vercel runs this script; without
+  `prisma generate` the Prisma Client is missing and the build fails.
+
+- **`apps/web/package.json` — added `postinstall`**: `"prisma generate"`.
+  Fires after `npm ci` so the Prisma Client exists even before the build
+  command runs (belt-and-suspenders for Vercel's install step).
+
+- **`apps/web/src/lib/prisma.ts`**: Fixed type annotation to
+  `{ prisma: PrismaClient | undefined }` and switched `||` → `??`.
+  Added comment clarifying that the `globalThis` cache is intentionally
+  not used in production (serverless cold starts get a fresh module scope).
+
+- **`apps/web/src/lib/cache.ts`**: Added comment explaining that the
+  in-memory LRU cache does not persist across Vercel serverless invocations.
+  No code changes — fall-through to the DB on cold starts is acceptable
+  for MVP.
+
+- **`apps/web/prisma/schema.prisma`**: Added
+  `directUrl = env("DIRECT_URL")` to the datasource block. Neon and
+  Supabase route `DATABASE_URL` through a connection pooler (pgBouncer).
+  Prisma Migrate / `db push` requires a direct non-pooled connection and
+  reads `directUrl` for that. Without this, migrations fail against
+  hosted databases.
+
+- **`apps/web/vercel.json`**: Updated `buildCommand` to `"npm run build"`
+  (delegates to package.json, which now includes `prisma generate`).
+
+- **`apps/web/.env.example`** *(new)*: Documents the three env vars the
+  web app needs on Vercel: `DATABASE_URL`, `DIRECT_URL`,
+  `NEXT_PUBLIC_API_BASE`.
+
+- **`DEPLOY_VERCEL.md`** *(new)*: Step-by-step guide for Neon/Supabase
+  provisioning, Vercel project import (Root Directory: `apps/web`),
+  required environment variables, post-deploy verification, and a
+  troubleshooting table.
+
+---
+
 ## Verified local install instructions
 
 ```bash

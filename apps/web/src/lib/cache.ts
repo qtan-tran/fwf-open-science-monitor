@@ -40,5 +40,10 @@ class LRUCache {
   }
 }
 
-// Module-level singleton — persists across requests within the same Node.js process.
+// Module-level singleton — persists across requests within the same Node.js
+// process/worker. On Vercel (serverless), each cold-start gets a fresh module
+// scope so the cache is empty per invocation; cache hits only occur within a
+// single warm invocation lifecycle. This is acceptable for MVP — requests
+// simply fall through to the database on cold starts. A shared cache (Redis,
+// Upstash) can be added later without changing callers.
 export const cache = new LRUCache();
