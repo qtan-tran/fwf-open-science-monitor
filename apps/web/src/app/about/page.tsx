@@ -372,13 +372,9 @@ export default function AboutPage() {
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Full system design:{" "}
-            <Link
-              href="#"
-              className="text-primary-600 dark:text-primary-400 hover:underline"
-              aria-label="Architecture documentation (local file)"
-            >
+            <ExtLink href="https://github.com/qtan-tran/fwf-open-science-monitor/blob/main/docs/architecture.md">
               docs/architecture.md
-            </Link>
+            </ExtLink>
           </p>
         </div>
       </Section>
