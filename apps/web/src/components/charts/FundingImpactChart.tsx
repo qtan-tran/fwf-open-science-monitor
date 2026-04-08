@@ -11,17 +11,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import type { YearlyMetric } from "@/lib/types";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { memo } from "react";
 import { useChartTheme } from "./useChartTheme";
+import type { FundingDatum } from "@/lib/transforms";
 
-export interface FundingDatum {
-  year: number;
-  avgAmount: number;
-  avgOutputs: number;
-  projectCount: number;
-}
+export type { FundingDatum };
 
 interface TooltipProps {
   active?: boolean;
@@ -158,12 +153,4 @@ export const FundingImpactChart = memo(function FundingImpactChart({ data }: { d
   );
 });
 
-// Utility: transform YearlyMetric[] from funding_efficiency to FundingDatum[]
-export function toFundingData(metrics: YearlyMetric[]): FundingDatum[] {
-  return metrics.map((m) => ({
-    year: m.year,
-    avgAmount: m.value,
-    avgOutputs: (m.metadata?.avg_outputs_per_project as number) ?? 0,
-    projectCount: (m.metadata?.project_count as number) ?? 0,
-  }));
-}
+export { toFundingData } from "@/lib/transforms";

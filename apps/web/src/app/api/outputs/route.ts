@@ -36,30 +36,45 @@ export async function GET(request: NextRequest) {
     ...(projectId ? { projects: { some: { id: projectId } } } : {}),
   };
 
-  const [total, outputs] = await prisma.$transaction([
-    prisma.output.count({ where }),
-    prisma.output.findMany({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: { category: "asc" },
-      select: {
-        id: true,
-        doi: true,
-        title: true,
-        category: true,
-        type: true,
-        years: true,
-        url: true,
-        hasDoi: true,
-        hasPmid: true,
-        pmid: true,
-        journal: true,
-        publisher: true,
-        providedToOthers: true,
-      },
-    }),
-  ]);
+  let total: number;
+  let outputs: Awaited<ReturnType<typeof prisma.output.findMany>>;
+  try {
+    [total, outputs] = await prisma.$transaction([
+      prisma.output.count({ where }),
+      prisma.output.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { category: "asc" },
+        select: {
+          id: true,
+          doi: true,
+          title: true,
+          category: true,
+          type: true,
+          years: true,
+          url: true,
+          hasDoi: true,
+          hasPmid: true,
+          pmid: true,
+          journal: true,
+          publisher: true,
+          providedToOthers: true,
+        },
+      }),
+    ]) as [number, Awaited<ReturnType<typeof prisma.output.findMany>>];
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "Output"} does not exist yet. Returning empty data.`);
+      return NextResponse.json(
+        { data: [], total: 0, page, limit, totalPages: 0 },
+        { status: 200 }
+      );
+    }
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   const data: OutputListItem[] = outputs.map((o) => ({
     id: o.id,

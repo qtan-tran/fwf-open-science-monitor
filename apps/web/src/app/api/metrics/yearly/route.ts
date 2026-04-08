@@ -54,40 +54,50 @@ export async function GET(request: NextRequest) {
 
   let rows: YearlyMetric[];
 
-  if (metric === "output_by_category") {
-    const snapshots = await prisma.metricSnapshot.findMany({
-      where: {
-        metricKey: { startsWith: "output_count_by_category_year:" },
-        ...yearFilter,
-      },
-      orderBy: [{ metricKey: "asc" }, { year: "asc" }],
-    });
-
-    rows = snapshots
-      .filter((s) => s.year !== null)
-      .map((s) => ({
-        year: s.year as number,
-        value: s.value,
-        metadata: {
-          ...(s.metadata as Record<string, unknown> | null),
-          metricKey: s.metricKey,
-          category: s.metricKey.replace("output_count_by_category_year:", ""),
+  try {
+    if (metric === "output_by_category") {
+      const snapshots = await prisma.metricSnapshot.findMany({
+        where: {
+          metricKey: { startsWith: "output_count_by_category_year:" },
+          ...yearFilter,
         },
-      }));
-  } else {
-    const metricKey = METRIC_KEY_MAP[metric]!;
-    const snapshots = await prisma.metricSnapshot.findMany({
-      where: { metricKey, ...yearFilter },
-      orderBy: { year: "asc" },
-    });
+        orderBy: [{ metricKey: "asc" }, { year: "asc" }],
+      });
 
-    rows = snapshots
-      .filter((s) => s.year !== null)
-      .map((s) => ({
-        year: s.year as number,
-        value: s.value,
-        metadata: (s.metadata as Record<string, unknown> | null) ?? undefined,
-      }));
+      rows = snapshots
+        .filter((s) => s.year !== null)
+        .map((s) => ({
+          year: s.year as number,
+          value: s.value,
+          metadata: {
+            ...(s.metadata as Record<string, unknown> | null),
+            metricKey: s.metricKey,
+            category: s.metricKey.replace("output_count_by_category_year:", ""),
+          },
+        }));
+    } else {
+      const metricKey = METRIC_KEY_MAP[metric]!;
+      const snapshots = await prisma.metricSnapshot.findMany({
+        where: { metricKey, ...yearFilter },
+        orderBy: { year: "asc" },
+      });
+
+      rows = snapshots
+        .filter((s) => s.year !== null)
+        .map((s) => ({
+          year: s.year as number,
+          value: s.value,
+          metadata: (s.metadata as Record<string, unknown> | null) ?? undefined,
+        }));
+    }
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "MetricSnapshot"} does not exist yet. Returning empty data.`);
+      return NextResponse.json([], { status: 200 });
+    }
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   cache.set(cacheKey, rows, TTL_MS);

@@ -22,50 +22,63 @@ export async function GET(
     return NextResponse.json(cached);
   }
 
-  const project = await prisma.project.findUnique({
-    where: { id },
-    include: {
-      outputs: {
-        select: {
-          id: true,
-          doi: true,
-          title: true,
-          category: true,
-          type: true,
-          years: true,
-          url: true,
-          hasDoi: true,
-          hasPmid: true,
-          pmid: true,
-          journal: true,
-          publisher: true,
-          providedToOthers: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let project: any;
+  try {
+    project = await prisma.project.findUnique({
+      where: { id },
+      include: {
+        outputs: {
+          select: {
+            id: true,
+            doi: true,
+            title: true,
+            category: true,
+            type: true,
+            years: true,
+            url: true,
+            hasDoi: true,
+            hasPmid: true,
+            pmid: true,
+            journal: true,
+            publisher: true,
+            providedToOthers: true,
+          },
+          orderBy: { category: "asc" },
         },
-        orderBy: { category: "asc" },
-      },
-      furtherFunding: {
-        select: {
-          id: true,
-          funder: true,
-          fundingId: true,
-          country: true,
-          sector: true,
-          title: true,
-          type: true,
-          startYear: true,
-          endYear: true,
-          funderProjectUrl: true,
+        furtherFunding: {
+          select: {
+            id: true,
+            funder: true,
+            fundingId: true,
+            country: true,
+            sector: true,
+            title: true,
+            type: true,
+            startYear: true,
+            endYear: true,
+            funderProjectUrl: true,
+          },
+          orderBy: { startYear: "desc" },
         },
-        orderBy: { startYear: "desc" },
       },
-    },
-  });
+    });
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "Project"} does not exist yet.`);
+      return NextResponse.json({ error: `Project '${id}' not found` }, { status: 404 });
+    }
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   if (!project) {
     return NextResponse.json({ error: `Project '${id}' not found` }, { status: 404 });
   }
 
-  const outputs: OutputListItem[] = project.outputs.map((o) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const outputs: OutputListItem[] = project.outputs.map((o: any) => ({
     id: o.id,
     doi: o.doi,
     title: o.title,
@@ -81,7 +94,8 @@ export async function GET(
     providedToOthers: o.providedToOthers,
   }));
 
-  const furtherFunding: FurtherFundingItem[] = project.furtherFunding.map((f) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const furtherFunding: FurtherFundingItem[] = project.furtherFunding.map((f: any) => ({
     id: f.id,
     funder: f.funder,
     fundingId: f.fundingId,

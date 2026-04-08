@@ -57,31 +57,49 @@ export async function GET(request: NextRequest) {
         : {}),
   };
 
-  const [total, projects] = await prisma.$transaction([
-    prisma.project.count({ where }),
-    prisma.project.findMany({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: [{ approvalYear: "desc" }, { id: "asc" }],
-      select: {
-        id: true,
-        grantDoi: true,
-        titleEn: true,
-        programEn: true,
-        statusEn: true,
-        approvalYear: true,
-        approvedAmount: true,
-        piFirstName: true,
-        piLastName: true,
-        piInstitutionName: true,
-        piInstitutionRor: true,
-        keywords: true,
-        fieldsEn: true,
-        _count: { select: { outputs: true } },
-      },
-    }),
-  ]);
+  const selectFields = {
+    id: true,
+    grantDoi: true,
+    titleEn: true,
+    programEn: true,
+    statusEn: true,
+    approvalYear: true,
+    approvedAmount: true,
+    piFirstName: true,
+    piLastName: true,
+    piInstitutionName: true,
+    piInstitutionRor: true,
+    keywords: true,
+    fieldsEn: true,
+    _count: { select: { outputs: true } },
+  } as const;
+
+  let total: number;
+  let projects: Prisma.ProjectGetPayload<{ select: typeof selectFields }>[];
+
+  try {
+    [total, projects] = await prisma.$transaction([
+      prisma.project.count({ where }),
+      prisma.project.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [{ approvalYear: "desc" }, { id: "asc" }],
+        select: selectFields,
+      }),
+    ]) as [number, Prisma.ProjectGetPayload<{ select: typeof selectFields }>[]];
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "Project"} does not exist yet. Returning empty data.`);
+      return NextResponse.json(
+        { data: [], total: 0, page, limit, totalPages: 0 },
+        { status: 200 }
+      );
+    }
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   const data: ProjectListItem[] = projects.map((p) => ({
     id: p.id,

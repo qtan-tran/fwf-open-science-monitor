@@ -218,9 +218,15 @@ export async function GET(request: NextRequest) {
         data = await exportInstitutions();
         break;
     }
-  } catch (err) {
-    console.error("Export error:", err);
-    return NextResponse.json({ error: "Export failed" }, { status: 500 });
+  } catch (err: unknown) {
+    const e = err as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "unknown"} does not exist yet. Returning empty export.`);
+      data = [];
+    } else {
+      console.error("Export error:", err);
+      return NextResponse.json({ error: "Export failed" }, { status: 500 });
+    }
   }
 
   const timestamp = new Date().toISOString().split("T")[0];

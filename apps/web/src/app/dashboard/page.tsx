@@ -29,10 +29,8 @@ import {
   type OpenDataSoftwareDatum,
 } from "@/components/charts/OpenDataSoftwareChart";
 import { InstitutionSection } from "@/components/charts/InstitutionSection";
-import {
-  FundingImpactChart,
-  toFundingData,
-} from "@/components/charts/FundingImpactChart";
+import { FundingImpactChart } from "@/components/charts/FundingImpactChart";
+import { toFundingData } from "@/lib/transforms";
 
 // Never prerender — data comes from the database at request time.
 export const dynamic = "force-dynamic";

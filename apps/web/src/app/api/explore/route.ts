@@ -194,7 +194,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(cached);
   }
 
-  const data = await fetchMode(mode);
+  let data: unknown;
+  try {
+    data = await fetchMode(mode);
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "unknown"} does not exist yet. Returning empty data.`);
+      data = null;
+    } else {
+      console.error("Database error:", error);
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+  }
   const result: ExploreResult = {
     mode,
     label: MODE_META[mode].label,

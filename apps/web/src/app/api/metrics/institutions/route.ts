@@ -29,14 +29,26 @@ export async function GET(request: NextRequest) {
   }
 
   // Fetch MetricSnapshot rows for institution metrics (includes OA rate in metadata)
-  const snapshots = await prisma.metricSnapshot.findMany({
-    where: { metricKey: "institution_project_count" },
-  });
-
-  // Fetch all institutions (filtered by country if provided)
-  const institutions = await prisma.institution.findMany({
-    where: country ? { country } : {},
-  });
+  let snapshots: Awaited<ReturnType<typeof prisma.metricSnapshot.findMany>>;
+  let institutions: Awaited<ReturnType<typeof prisma.institution.findMany>>;
+  try {
+    [snapshots, institutions] = await Promise.all([
+      prisma.metricSnapshot.findMany({
+        where: { metricKey: "institution_project_count" },
+      }),
+      prisma.institution.findMany({
+        where: country ? { country } : {},
+      }),
+    ]);
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "unknown"} does not exist yet. Returning empty data.`);
+      return NextResponse.json([], { status: 200 });
+    }
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   const institutionMap = new Map(institutions.map((i) => [i.rorId, i]));
   const snapshotMap = new Map(

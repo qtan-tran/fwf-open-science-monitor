@@ -12,9 +12,23 @@ export async function GET() {
     return NextResponse.json(cached);
   }
 
-  const snapshot = await prisma.metricSnapshot.findFirst({
-    where: { metricKey: "summary" },
-  });
+  let snapshot;
+  try {
+    snapshot = await prisma.metricSnapshot.findFirst({
+      where: { metricKey: "summary" },
+    });
+  } catch (error: unknown) {
+    const e = error as { code?: string; meta?: { table?: string } };
+    if (e?.code === "P2021") {
+      console.warn(`Table ${e?.meta?.table ?? "MetricSnapshot"} does not exist yet. Returning empty data.`);
+      return NextResponse.json(
+        { error: "Summary metrics not yet computed. Run the ETL pipeline first." },
+        { status: 404 }
+      );
+    }
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   if (!snapshot) {
     return NextResponse.json(
