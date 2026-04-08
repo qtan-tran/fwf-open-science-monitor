@@ -9,43 +9,43 @@
 🌍 Ngôn ngữ:  
 🇬🇧 [English](README.md) | 🇫🇷 [Français](README.fr.md) | 🇩🇪 [Deutsch](README.de.md) | 🇻🇳 Tiếng Việt
 
-Một bảng điều khiển full-stack theo dõi tuân thủ open science trên hàng nghìn dự án nghiên cứu được tài trợ bởi [FWF](https://www.fwf.ac.at/en/).
+Bảng điều khiển full-stack theo dõi việc tuân thủ các chỉ định về open science trên hàng nghìn dự án nghiên cứu được tài trợ bởi Quỹ Khoa học Áo [FWF](https://www.fwf.ac.at/en/).
 
 ---
 
 ## 🏛️ Nguồn gốc và Tác giả
-Repository này được tạo và duy trì bởi **Quoc-Tan Tran**, Nhà nghiên cứu Open Science tại **Khoa Xã hội học, Đại học Bielefeld**, với sự hỗ trợ kỹ thuật từ **Claude AI**.
+Repository này được tạo và duy trì bởi **Trần Quốc Tân**, nghiên cứu viên về Open Science tại **Khoa Xã hội học, Đại học Bielefeld, CHLB Đức**, với sự hỗ trợ kỹ thuật từ **Claude AI**.
 
-Nó được thiết kế để phục vụ như một cơ sở hạ tầng nghiên cứu có thể tái tạo, cho thấy cách các pipeline tự động và công nghệ web hiện đại có thể cải thiện tính minh bạch trong tài trợ nghiên cứu và các output khoa học.
+Dự án (bao gồm giao diện web) này bắt đầu như một thử nghiệm nhỏ nhằm hiểu dữ liệu tài trợ theo cách mà người khác cũng có thể theo dõi và tái sử dụng. Mục tiêu không phải là xây dựng một hệ thống hoàn hảo, mà là để cho thấy chỉ với những pipeline tự động đơn giản và các công cụ web cơ bản, đã có thể làm cho dữ liệu tài trợ và các kết quả nghiên cứu trở nên minh bạch hơn một chút và dễ khám phá hơn.
 
 ---
 
 ## ⚡ Tầm nhìn
-Monitor này lấp đầy khoảng trống giữa dữ liệu tài trợ thô và những insight có thể hành động. Nó trực quan hóa tỷ lệ truy cập mở, xu hướng output và bảng xếp hạng tổ chức để hỗ trợ chuyển dịch toàn cầu hướng tới khoa học mở và có thể tái tạo.
+Mục tiêu ở đây khá đơn giản: lấy những dữ liệu tài trợ thô, lộn xộn và biến chúng thành thứ mà bạn có thể nhìn vào và hiểu được. Bằng cách hiển thị những thứ như tỷ lệ truy cập mở, xu hướng công bố, hay hoạt động của các tổ chức, monitor này cố gắng mang lại một bức tranh rõ ràng hơn về những gì đang diễn ra, hy vọng là theo cách có thể góp phần thúc đẩy khoa học mở và có thể tái lập.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────┐
 │  Dashboard  │  Projects  │  Institutions  │  Explore  │  Export      │
 ├──────────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐            │
-│  │ 1,500    │  │ 12,000   │  │ 80       │  │ 67.5%    │            │
-│  │ Projects │  │ Outputs  │  │ Instits  │  │ OA Rate  │            │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘            │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │ 1,500    │  │ 12,000   │  │ 80       │  │ 67.5%    │              │
+│  │ Projects │  │ Outputs  │  │ Instits  │  │ OA Rate  │              │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘              │
 │                                                                      │
 │  OA Rate Over Time          Projects by Year                         │
 │  ┌──────────────────────┐   ┌──────────────────────┐                 │
-│  │  ▁▂▃▄▅▆▇█           │   │  ▂▃▄▅▄▆▇█▇▆          │                 │
+│  │ ▁▂▃▄▅▆▇█         │   │ ▂▃▄▅▄▆▇█▇▆      │                 │
 │  └──────────────────────┘   └──────────────────────┘                 │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
 ## ✨ Tính năng Chính
 
-- **📊 Bảng điều khiển Sáu Trục** — Các chỉ số chính (tỷ lệ OA, hiệu quả tài trợ) với trực quan hóa tương tác Recharts.
-- **🔍 Trình khám phá Chi tiết** — 10 chế độ phân tích độc đáo bao gồm tìm kiếm nhà nghiên cứu, phân tích xuất bản và scatter plots tài trợ.
-- **⚡ ETL Hiệu suất Cao** — Pipeline Python 3.12 đồng bộ hàng ngày, làm sạch và tính toán các chỉ số từ API FWF Open Research.
-- **🚀 Sẵn sàng Sản xuất** — Cache LRU trong bộ nhớ (TTL 5 phút), an toàn kiểu đầy đủ với Prisma, và chế độ tối nhận biết hệ thống.
-- **📦 Thiết lập Một Lệnh** — Môi trường hoàn toàn containerized cho phát triển và thử nghiệm cục bộ tức thì.
+- **📊 Dashboard 6 chỉ số** — Hiển thị các số liệu quan trọng (như tỷ lệ truy cập mở, hiệu quả tài trợ) với biểu đồ tương tác bằng Recharts.
+- **🔍 Khám phá chi tiết** — Có 10 chế độ phân tích khác nhau, bao gồm tìm kiếm nhà nghiên cứu, phân tích публикации, và biểu đồ phân tán về tài trợ.
+- **⚡ Xử lý dữ liệu nhanh** — Pipeline Python 3.12 tự động cập nhật dữ liệu mỗi ngày, làm sạch và tính toán từ API FWF Open Research.
+- **🚀 Sẵn sàng sử dụng** — Dùng cache trong bộ nhớ (5 phút), đảm bảo kiểu dữ liệu an toàn với Prisma, và hỗ trợ Dark Mode theo hệ thống.
+- **📦 Chạy nhanh với 1 lệnh** — Môi trường đã được đóng gói sẵn (Docker), giúp chạy và test ngay trên máy local.
 
 ---
 
@@ -235,4 +235,4 @@ python -m src.pipeline
 ---
 
 **Xây dựng với ❤️ cho Open Science.**  
-*Nếu bạn thấy dự án này hữu ích, hãy nghĩ đến việc cho nó một ⭐ để giúp người khác tìm thấy nó!*
+*Nếu thấy dự án này hữu ích, bạn có thể cho một ⭐ để giúp người khác tìm thấy repo dễ dàng hơn!*
