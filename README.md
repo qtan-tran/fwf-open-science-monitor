@@ -1,5 +1,8 @@
 # 🔬 FWF Open Science Monitor
 
+🌍 **Languages:**  
+🇬🇧 English | 🇫🇷 [Français](README.fr.md) | 🇩🇪 [Deutsch](README.de.md)
+
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](https://www.docker.com/)
@@ -16,25 +19,25 @@ A full-stack dashboard tracking open-science compliance across thousands of [FWF
 ## 🏛️ Origins & Authorship
 This repository was created and is maintained by **Quoc-Tan Tran**, Open Science Researcher at the **Faculty of Sociology, Bielefeld University**, with the technical assistance of **Claude AI**. 
 
-It is designed to serve as a reproducible research infrastructure, demonstrating how automated pipelines and modern web technologies can enhance transparency in research funding and scientific outputs.
+It started as a small attempt to make sense of funding data in a way that others could also follow and reuse. The idea is not to build a perfect system, but to show how simple automated pipelines and basic web tools can already make research funding and outputs a bit more transparent and easier to explore.
 
 ---
 
 ## ⚡ The Vision
-This monitor bridges the gap between raw funding data and actionable insights. It visualizes open access rates, output trends, and institutional rankings to support the global move toward open, reproducible science.
+The goal here is quite straightforward: take messy, raw funding data and turn it into something you can actually look at and understand. By showing things like open access rates, publication trends, and institutional activity, this monitor tries to give a clearer picture of what’s going on—hopefully in a way that supports more open and reproducible science.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────┐
 │  Dashboard  │  Projects  │  Institutions  │  Explore  │  Export      │
 ├──────────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐            │
-│  │ 1,500    │  │ 12,000   │  │ 80       │  │ 67.5%    │            │
-│  │ Projects │  │ Outputs  │  │ Instits  │  │ OA Rate  │            │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘            │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │ 1,500    │  │ 12,000   │  │ 80       │  │ 67.5%    │              │
+│  │ Projects │  │ Outputs  │  │ Instits  │  │ OA Rate  │              │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘              │
 │                                                                      │
 │  OA Rate Over Time          Projects by Year                         │
 │  ┌──────────────────────┐   ┌──────────────────────┐                 │
-│  │  ▁▂▃▄▅▆▇█           │   │  ▂▃▄▅▄▆▇█▇▆          │                 │
+│  │ ▁▂▃▄▅▆▇█         │   │ ▂▃▄▅▄▆▇█▇▆      │                 │
 │  └──────────────────────┘   └──────────────────────┘                 │
 └──────────────────────────────────────────────────────────────────────┘
 ```
@@ -234,5 +237,6 @@ Contributions are welcome! If you want to improve the charts, add a new "Explore
 
 ---
 
-**Built with ❤️ for Open Science.**  
-*If you find this project useful, please consider giving it a ⭐ to help others find it!*
+**Built with ❤️/📊/🔬/⚙️ for Open Science.**  
+This project is an experiment in making open science data easier to explore.
+*If you think it’s useful, a ⭐ is always appreciated.*
