@@ -162,8 +162,10 @@ export default function AboutPage() {
             researchers, and the public understand how Austrian science is progressing towards
             open-science principles.
           </p>
-          <p>
-            The project is fully open source.{" "}
+          <p>            Instead of digging through reports or complex datasets, you can explore clear,
+            interactive visuals to see how open science is evolving over time.
+          </p>
+          <p>            The project is fully open source.{" "}
             <ExtLink href="https://github.com/qtan-tran/fwf-open-science-monitor">
               View the source on GitHub
             </ExtLink>
