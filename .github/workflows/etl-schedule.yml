@@ -34,17 +34,15 @@ jobs:
       - name: Run full pipeline
         if: ${{ inputs.metrics_only != 'true' }}
         working-directory: etl
-        run: python -m src.pipeline
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          FWF_API_URL: ${{ secrets.FWF_API_URL }}
           FWF_API_KEY: ${{ secrets.FWF_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m src.pipeline
 
       - name: Recompute metrics only
         if: ${{ inputs.metrics_only == 'true' }}
         working-directory: etl
-        run: python -m src.pipeline --metrics-only
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          FWF_API_URL: ${{ secrets.FWF_API_URL }}
           FWF_API_KEY: ${{ secrets.FWF_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m src.pipeline --metrics-only
