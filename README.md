@@ -9,7 +9,7 @@
 🌍 Languages:  
 🇬🇧 English | 🇫🇷 [Français](README.fr.md) | 🇩🇪 [Deutsch](README.de.md) | 🇻🇳 [Tiếng Việt](README.vi.md)
 
-A full-stack dashboard tracking open-science compliance across thousands of [FWF](https://www.fwf.ac.at/en/)-funded research projects. 
+An interactive dashboard tracking open-science compliance across thousands of [FWF](https://www.fwf.ac.at/en/)-funded research projects. 
 
 ---
 
