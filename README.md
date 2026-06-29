@@ -151,11 +151,11 @@ Get-Content seed/seed.sql | docker exec -i (docker compose ps -q db) psql -U pos
 
 | Layer | Technology | Why? |
 |------|-----------|------|
-| **Frontend** | **Next.js 16 (App Router)** | Performance monitor and SEO for dashboards. |
-| **Styling** | **Tailwind CSS 4** | Utility-first design for a clean, modern UI. |
-| **Backend** | **PostgreSQL + Prisma** | Robust relational data with a type-safe ORM. |
-| **Pipeline** | **Python 3.12 + Pytest** | Fast data processing with 240+ unit tests for reliability. |
-| **CI / CD** | **GitHub Actions** | Automated linting, type-checking, and ETL scheduling. |
+| **Frontend** | **Next.js 16 (App Router)** | Performance monitor and SEO for dashboards |
+| **Styling** | **Tailwind CSS 4** | Utility-first design for a clean, modern UI |
+| **Backend** | **PostgreSQL + Prisma** | Robust relational data with a type-safe ORM |
+| **Pipeline** | **Python 3.12 + Pytest** | Fast data processing with 240+ unit tests for reliability |
+| **CI / CD** | **GitHub Actions** | Automated linting, type-checking, and ETL scheduling |
 
 ---
 
