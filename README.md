@@ -16,7 +16,7 @@ An interactive dashboard tracking open-science compliance across thousands of [F
 ## 🏛️ Origins & Authorship
 This repository was created and is maintained by **Quoc-Tan Tran**, Open Science Researcher at the **Faculty of Sociology, Bielefeld University**, with the technical assistance of **Claude AI**. 
 
-It started as a small attempt to make sense of funding data in a way that others could also follow and reuse. The idea is not to build a perfect system, but to show how simple automated pipelines and basic web tools can already make research funding and outputs a bit more transparent and easier to explore.
+It started as a small attempt to make sense of funding data in a way that others could also follow and reuse. The idea is not to build a perfect system, but to show how simple automated pipelines and basic web tools can already make research funding and outputs more transparent and easier to explore.
 
 ---
 
