@@ -21,7 +21,7 @@ Dự án (bao gồm giao diện web) này bắt đầu như một thử nghiệm
 ---
 
 ## ⚡ Tầm nhìn
-Mục tiêu ở đây khá đơn giản: lấy những dữ liệu tài trợ thô, lộn xộn và biến chúng thành thứ mà bạn có thể nhìn vào và hiểu được. Bằng cách hiển thị những thứ như tỷ lệ truy cập mở, xu hướng công bố, hay hoạt động của các tổ chức, monitor này cố gắng mang lại một bức tranh rõ ràng hơn về những gì đang diễn ra, hy vọng là theo cách có thể góp phần thúc đẩy khoa học mở và có thể tái lập.
+Mục tiêu của repo này là như sau: lấy những dữ liệu tài trợ thô và chuyển thành những ý tưởng rõ ràng mà người đọc có thể nhìn vào và hiểu được. Bằng cách hiển thị những thứ như tỷ lệ truy cập mở, xu hướng công bố, hay hoạt động của các tổ chức, dashboard này cố gắng mang lại một bức tranh rõ ràng hơn về những gì đang diễn ra, hy vọng là theo cách có thể góp phần thúc đẩy khoa học mở và có thể tái lập.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────┐
