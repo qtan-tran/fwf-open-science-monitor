@@ -167,7 +167,7 @@ fwf-open-science-monitor/
 │   ├── prisma/         #   Database schema (schema.prisma)
 │   ├── src/app/        #   App Router: pages + API routes
 │   └── components/     #   Reusable UI & Chart components
-├── etl/                # Python data pipeline
+├── etl/                #   Python data pipeline
 │   ├── src/            #   Orchestrator, Cleaner, & Metric computation
 │   └── tests/          #   Comprehensive pytest suite
 ├── .github/workflows/  # CI pipelines + Daily ETL schedule
