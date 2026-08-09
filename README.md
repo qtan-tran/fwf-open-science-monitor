@@ -43,7 +43,7 @@ The goal here is quite straightforward: take messy, raw funding data and turn it
 
 - **📊 Six-Axis Dashboard** – Headline metrics (OA rates, funding efficiency) with interactive Recharts visualizations.
 - **🔍 Deep-Dive Explorer** – 10 unique analysis modes including researcher search, publication breakdowns, and funding scatter plots.
-- **⚡ High-Performance ETL** – Python 3.12 pipeline that daily syncs, cleans, and computes metrics from the FWF Open Research API.
+- **⚡ High-Performance ETL** – Python 3.12 pipeline that syncs, cleans, and computes metrics from the FWF Open Research API on a daily basis.
 - **🚀 Production Ready** – In-memory LRU caching (5-min TTL), full type-safety with Prisma, and system-aware Dark Mode.
 - **📦 One-Command Setup** – Fully containerized environment for instant local development and testing.
 
