@@ -76,7 +76,7 @@ Edit `.env` and add your FWF API key (get it from https://openapi.fwf.ac.at/fwfk
 FWF_API_KEY=your_key_here
 ```
 
-> **Note:** The API key is only required to run the ETL pipeline. You can browse the dashboard without one (it will show empty charts until data is loaded).
+> **Note:** The API key is only required to run ETL pipeline. You can browse the dashboard without one (it will show empty charts until data is loaded).
 
 ### 2. Start the Database
 
