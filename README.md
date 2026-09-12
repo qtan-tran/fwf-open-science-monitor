@@ -105,7 +105,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-> **💡 Tip:** The database starts empty. To see real data, run the ETL pipeline (see [ETL Guide](#-etl-guide) below) to sync live data from the FWF API, or load a pre-built `seed/seed.sql` if one is available (see [Loading Seed Data](#loading-seed-data) below).
+> **💡 Tip:** The database starts empty in the beginning. To see real data, run the ETL pipeline (see [ETL Guide](#-etl-guide) below) to sync live data from the FWF API, or load a pre-built `seed/seed.sql` if one is available (see [Loading Seed Data](#loading-seed-data) below).
 
 ---
 
